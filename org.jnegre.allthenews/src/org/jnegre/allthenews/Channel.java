@@ -5,7 +5,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import org.apache.xerces.parsers.DOMParser;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Table;
@@ -58,11 +60,12 @@ public class Channel {
         		conn.setRequestProperty("Cache-Control", "no-cache");
             }
             InputStream stream = conn.getInputStream();
-            DOMParser parser = new DOMParser();
-            parser.setFeature("http://apache.org/xml/features/allow-java-encodings",true);
-            parser.parse(new InputSource(stream));
+            //DOMParser parser = new DOMParser();
+            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            //FIXME put this back if it's still needed
+            //parser.setFeature("http://apache.org/xml/features/allow-java-encodings",true);
+            Document doc = parser.parse(new InputSource(stream));
             stream.close();
-            Document doc = parser.getDocument();
             NodeList itemNodes = doc.getElementsByTagName("item");
             for (int i = 0; i < itemNodes.getLength(); i++) {
                 Item aNewItem = new Item(this, (Element) itemNodes.item(i));

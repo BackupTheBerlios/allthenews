@@ -21,7 +21,6 @@
       <import plugin="org.eclipse.core.boot"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.swt"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.update.ui"/>
    </requires>
 
@@ -60,7 +59,6 @@
             class="org.jnegre.allthenews.view.BrowserView"
             id="org.jnegre.allthenews.view.browser">
       </view>
-
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
