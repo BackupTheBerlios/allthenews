@@ -44,7 +44,11 @@ public class Plugin extends AbstractUIPlugin {
 	public static final String ICON_OK = "ok.gif";
 	public static final String ICON_REFRESH = "refresh.gif";
     public static final String ICON_UNREAD = "unread.gif";
-    
+
+    public static final String ICON_LINK = "link.gif";
+    public static final String ICON_BROWSER_BACK = "back.png";
+    public static final String ICON_BROWSER_FORWARD = "forward.png";
+
     public static final String ICON_LED_DARK_GREEN = "dark_green_led.png";
     public static final String ICON_LED_LIGHT_GREEN = "light_green_led.png";
     public static final String ICON_LED_RED = "red_led.png";
@@ -150,6 +154,8 @@ public class Plugin extends AbstractUIPlugin {
 		registry.put(ICON_REFRESH,getImageDescriptor(ICON_REFRESH));
         registry.put(ICON_UNREAD,getImageDescriptor(ICON_UNREAD));
         //new 3.0 icons
+        registry.put(ICON_LINK,getImageDescriptor(ICON_LINK));
+        
         registry.put(ICON_LED_DARK_GREEN,getImageDescriptor(ICON_LED_DARK_GREEN));
         registry.put(ICON_LED_LIGHT_GREEN,getImageDescriptor(ICON_LED_LIGHT_GREEN));
         registry.put(ICON_LED_RED,getImageDescriptor(ICON_LED_RED));
