@@ -81,8 +81,13 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 	public void onItemSelected(Item item) {
 		if(item != null && uiReady && linkAction.isChecked()) {
 			browser.setUrl(item.getUsableLink());
+			//XXX this is a hack, should be done otherwise
+			boolean channelStatus = item.getChannel().isUnread();
 			item.setReadFlag(true);
 			Plugin.getDefault().notifyItemStatusChanged(item, this);
+			if(channelStatus != item.getChannel().isUnread()) {
+				Plugin.getDefault().notifyChannelStatusChanged(item.getChannel(),this);
+			}
 		}
 	}
 
