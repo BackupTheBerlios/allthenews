@@ -6,8 +6,16 @@
 
 package org.jnegre.allthenews.search;
 
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import org.apache.xmlrpc.XmlRpcClient;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,7 +33,16 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SearchDialog extends Dialog {
 
-
+    private Text searchText;
+    private List list;
+    private Text name;
+    private Text siteUrl;
+    private Text feedUrl;
+    private Text version;
+    private Text description;
+    
+    private XmlRpcClient xmlRpcClient;
+    
     /**
      * @param parentShell
      */
@@ -48,49 +65,95 @@ public class SearchDialog extends Dialog {
         GridLayout gl = (GridLayout)composite.getLayout();
         gl.numColumns = 4;
         //Text to enter the searched words
-        Text searchText = new Text(composite,SWT.BORDER);
+        searchText = new Text(composite,SWT.BORDER);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 3;
         searchText.setLayoutData(gd);
         //Button "search!"
         Button searchButton = new Button(composite,0);
         searchButton.setText("Search!");
+        searchButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                //TODO use a worker
+                //TODO change the cursor (wait...)
+                try {
+                    SearchDialog.this.searchNow();
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                //TODO put the original cursor back
+            }
+        });
         //List for the titles of the feeds
-        List list = new List(composite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.SINGLE);
+        list = new List(composite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.SINGLE);
         gd = new GridData(GridData.FILL_BOTH);
         list.setLayoutData(gd);
-        list.add("Feed 1");
-        list.add("Feed 2");
-        list.add("Feed 3");
         //Description of the selected feed
         Group group = new Group(composite,0);
-        group.setText("Selected Field");
+        group.setText("Selected Feed");
         gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 3;
         group.setLayoutData(gd);
         group.setLayout(new GridLayout(2,false));
         //name
         new Label(group,0).setText("Name:");
-        Text feedName = new Text(group,SWT.BORDER|SWT.READ_ONLY);
-        feedName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        name = new Text(group,SWT.BORDER|SWT.READ_ONLY);
+        name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         //site url
         new Label(group,0).setText("Site URL:");
-        Text feedSiteUrl = new Text(group,SWT.BORDER|SWT.READ_ONLY);
-        feedSiteUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        siteUrl = new Text(group,SWT.BORDER|SWT.READ_ONLY);
+        siteUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         //feed url
         new Label(group,0).setText("Feed URL:");
-        Text feedUrl = new Text(group,SWT.BORDER|SWT.READ_ONLY);
+        feedUrl = new Text(group,SWT.BORDER|SWT.READ_ONLY);
         feedUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         //RSS version
         new Label(group,0).setText("RSS version:");
-        Text feedRssVersion = new Text(group,SWT.BORDER|SWT.READ_ONLY);
-        feedRssVersion.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        version = new Text(group,SWT.BORDER|SWT.READ_ONLY);
+        version.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         //description
         new Label(group,0).setText("Description:");
-        Text feedDescription = new Text(group,SWT.BORDER|SWT.READ_ONLY|SWT.MULTI|SWT.H_SCROLL|SWT.V_SCROLL);
-        feedDescription.setLayoutData(new GridData(GridData.FILL_BOTH));
-        feedDescription.setText("ligne1\nligne2\nligne3\nligne4");
+        description = new Text(group,SWT.BORDER|SWT.READ_ONLY|SWT.MULTI|SWT.H_SCROLL|SWT.V_SCROLL|SWT.WRAP);
+        description.setLayoutData(new GridData(GridData.FILL_BOTH));
         return composite;
+    }
+
+    private XmlRpcClient getXmlRpcClient() throws MalformedURLException {
+        if(this.xmlRpcClient == null) {
+            this.xmlRpcClient = new XmlRpcClient("http://www.syndic8.com/xmlrpc.php");
+        }
+        return this.xmlRpcClient;
+    }
+
+    /**
+     * 
+     */
+    protected void searchNow() throws Exception {
+      XmlRpcClient client = getXmlRpcClient();
+      //Get the list of ids
+      Vector args = new Vector();
+      args.add(searchText.getText());
+      Vector ids = (Vector)client.execute("syndic8.FindFeeds",args);
+      System.out.println("=> "+ids);
+      //Get the descriptions of the feeds
+      Vector fields = new Vector();
+      fields.add("sitename");
+      fields.add("siteurl");
+      fields.add("dataurl");
+      fields.add("rss_version");
+      fields.add("description");
+      args.clear();
+      args.add(ids);
+      args.add(fields);
+      Vector infos = (Vector)client.execute("syndic8.GetFeedInfo",args);
+      Hashtable info = (Hashtable)infos.get(0);
+      name.setText((String)info.get("sitename"));
+      siteUrl.setText((String)info.get("siteurl"));
+      feedUrl.setText((String)info.get("dataurl"));
+      version.setText((String)info.get("rss_version"));
+      description.setText((String)info.get("description"));
+      
     }
 
 }
