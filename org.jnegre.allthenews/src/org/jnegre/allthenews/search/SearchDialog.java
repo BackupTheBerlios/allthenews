@@ -44,6 +44,8 @@ public class SearchDialog extends Dialog {
     private Text version;
     private Text description;
     
+    private ArrayList resultFeeds = new ArrayList();
+    
     private XmlRpcClient xmlRpcClient;
     
     /**
@@ -203,6 +205,7 @@ public class SearchDialog extends Dialog {
     
     protected void setStatusMessage(String message) {
         statusBar.setText(message);
+        //TODO remove next line
         System.out.println(message);
     }
 
@@ -211,4 +214,18 @@ public class SearchDialog extends Dialog {
         createButton(parent,IDialogConstants.OK_ID,IDialogConstants.OK_LABEL,false);
     }
 
+	protected void buttonPressed(int buttonId) {
+		super.buttonPressed(buttonId);
+		if(buttonId == IDialogConstants.OPEN_ID) {
+			String name = this.name.getText();
+			String url = this.feedUrl.getText();
+			if(!"".equals(name) && !"".equals(url)) {
+				resultFeeds.add(name+" \u00B6 "+url);
+			}
+		}
+	}
+	
+	public String[] getFeeds() {
+		return (String[])resultFeeds.toArray(new String[]{});
+	}
 }
