@@ -42,7 +42,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
     private Action linkAction;
     private Action clearAction;
 
-    private boolean linkActionInitState = false;
+    private boolean linkActionInitState = true;
 	
 	public BrowserView() {
 		super();
@@ -62,29 +62,20 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 	public void setFocus() {
 		browser.setFocus();
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onChannelListChanged(java.util.ArrayList)
-	 */
+
 	public void onChannelListChanged(ArrayList channels) {
-		// TODO Auto-generated method stub
+		//NOP
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onChannelStatusChanged(org.jnegre.allthenews.Channel)
-	 */
+
 	public void onChannelStatusChanged(Channel channel) {
-		// TODO Auto-generated method stub
+		//NOP
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onChannelSelected(org.jnegre.allthenews.Channel)
-	 */
 	public void onChannelSelected(Channel channel) {
-		// TODO Auto-generated method stub
+		//NOP
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onItemStatusChanged(org.jnegre.allthenews.Item)
-	 */
+
 	public void onItemStatusChanged(Item item) {
-		// TODO Auto-generated method stub
+		//NOP
 	}
 
 	public void onItemSelected(Item item) {
@@ -159,8 +150,8 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 		super.init(site, memento);
 		if(memento != null) {
 			Integer link = memento.getInteger(LINK_MEMENTO_KEY);
-			if(link != null && link.intValue() == 1) {
-				linkActionInitState = true;
+			if(link != null && link.intValue() == 0) {
+				linkActionInitState = false;
 			}
 		}
 	}
