@@ -46,6 +46,7 @@ public class HeadlineView extends ViewPart implements RssListener {
 	
 	public void createPartControl(Composite parent) {
         table = new Table(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        //TODO remember the width of the columns
         createColumn(SWT.LEFT, 120, "Publication Date");
         createColumn(SWT.CENTER, 20, "");
         createColumn(SWT.LEFT, 600, "Title");
