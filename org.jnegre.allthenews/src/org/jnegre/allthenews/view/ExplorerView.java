@@ -6,6 +6,8 @@ package org.jnegre.allthenews.view;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -26,7 +28,9 @@ public class ExplorerView extends ViewPart implements RssListener {
 	private TreeViewer treeViewer;
 	private NewsTreeViewerProvider provider;
 	private boolean uiReady = false;
-	
+
+    private Action refreshAction;
+
 	public ExplorerView() {
 		super();
 		Plugin.getDefault().addRssListener(this);
@@ -57,6 +61,10 @@ public class ExplorerView extends ViewPart implements RssListener {
 		});
 		uiReady = true;
 		treeViewer.setInput(Plugin.getDefault());
+
+        createActions();
+        createMenu();
+        createToolBar();
 	}
 
 	public void setFocus() {
@@ -98,4 +106,24 @@ public class ExplorerView extends ViewPart implements RssListener {
 			});
 		}
 	}
+
+    private void createActions() {
+        refreshAction = new Action("Refresh", Plugin.getDefault().getImageDescriptor(Plugin.ICON_REFRESH)) {
+            public void run() {
+                Plugin.getDefault().update();
+            }
+        };
+        refreshAction.setToolTipText("Refresh");
+    }
+
+    private void createMenu() {
+        //IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
+        //mgr.add(clearAction);
+    }
+
+    private void createToolBar() {
+        IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+        mgr.add(refreshAction);
+    }
+
 }
