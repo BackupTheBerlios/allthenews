@@ -22,8 +22,6 @@ public class Perspective implements IPerspectiveFactory {
 		left.addView("org.jnegre.allthenews.view.explorer");
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT,
 				0.70f, editorArea);
-		//FIXME remove this deprecated view
-		right.addView("org.jnegre.allthenews.view");
 		right.addView("org.jnegre.allthenews.view.browser");
 	}
 }
