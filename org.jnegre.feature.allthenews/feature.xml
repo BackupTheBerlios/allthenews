@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.jnegre.feature.allthenews"
+      label="All The News"
+      version="2.0.2"
+      provider-name="Jérôme Nègre">
+
+   <license url="http://www.jnegre.org/cpl1_0.html">
+      Common Public License v1.0
+
+See http://www.jnegre.org/cpl1_0.html
+   </license>
+
+   <url>
+      <update label="jnegre.org update site" url="http://www.jnegre.org/updates"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.core.boot"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.update.ui"/>
+   </requires>
+
+   <plugin
+         id="org.jnegre.allthenews"
+         download-size="64700"
+         install-size="0"
+         version="2.0.2">
+   </plugin>
+
+</feature>

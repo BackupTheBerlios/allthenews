@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.jnegre.allthenews"
+   name="All The News"
+   version="2.0.2"
+   provider-name="Jérôme Nègre"
+   class="org.jnegre.allthenews.Plugin">
+
+   <runtime>
+      <library name="allthenews.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.boot"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.update.ui"/>
+   </requires>
+
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Utilities"
+            id="org.jnegre.utilities">
+      </category>
+      <view
+            name="All The News"
+            icon="icons\news.gif"
+            category="org.jnegre.utilities"
+            class="org.jnegre.allthenews.view.MainView"
+            id="org.jnegre.allthenews.view">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="All The News"
+            icon="icons\news.gif"
+            class="org.jnegre.allthenews.Perspective"
+            id="org.jnegre.allthenews.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="All The News"
+            class="org.jnegre.allthenews.pref.PreferencePage"
+            id="org.jnegre.allthenews.preference">
+      </page>
+   </extension>
+
+</plugin>
