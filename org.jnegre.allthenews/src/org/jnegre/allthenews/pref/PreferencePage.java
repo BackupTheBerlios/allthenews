@@ -26,8 +26,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
     protected void createFieldEditors() {
         siteListFE = new SiteListEditor(Plugin.BACKENDS_PREFERENCE, "Sites", getFieldEditorParent());
         banListFE = new BanListEditor(Plugin.BANNED_ITEMS_PREFERENCE, "Banned items", getFieldEditorParent());
+        /*
         browserAppFE = new FileFieldEditor(Plugin.BROWSER_PREFERENCE, "External Browser", getFieldEditorParent());
-
+        */
         refreshFE = new IntegerFieldEditor(Plugin.REFRESH_INTERVAL_PREFERENCE,"Refresh interval (minutes)", getFieldEditorParent());
         refreshFE.setValidRange(0,10000);
 
@@ -35,7 +36,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
         addField(siteListFE);
         addField(banListFE);
+        /*
         addField(browserAppFE);
+        */
         addField(refreshFE);
         addField(forceCacheFE);
     }
