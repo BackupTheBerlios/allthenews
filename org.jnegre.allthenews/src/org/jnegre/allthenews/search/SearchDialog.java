@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import org.apache.xmlrpc.XmlRpcClient;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SearchDialog extends Dialog {
 
+    private Label statusBar;
     private Text searchText;
     private List list;
     private Text name;
@@ -62,10 +64,10 @@ public class SearchDialog extends Dialog {
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
-        //TODO add a status bar
         Composite composite = (Composite)super.createDialogArea(parent);
         GridLayout gl = (GridLayout)composite.getLayout();
         gl.numColumns = 4;
+        
         //Text to enter the searched words
         searchText = new Text(composite,SWT.BORDER);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -80,9 +82,8 @@ public class SearchDialog extends Dialog {
                 //TODO change the cursor (wait...)
                 try {
                     SearchDialog.this.searchNow();
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                } catch (Exception x) {
+                    setStatusMessage("Error: "+x.getMessage());
                 }
                 //TODO put the original cursor back
             }
@@ -124,6 +125,13 @@ public class SearchDialog extends Dialog {
         new Label(group,0).setText("Description:");
         description = new Text(group,SWT.BORDER|SWT.READ_ONLY|SWT.MULTI|SWT.H_SCROLL|SWT.V_SCROLL|SWT.WRAP);
         description.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        //status bar
+        statusBar = new Label(composite,SWT.NONE);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 4;
+        statusBar.setLayoutData(gd);
+        setStatusMessage("Ready.");
         return composite;
     }
 
@@ -139,6 +147,7 @@ public class SearchDialog extends Dialog {
      */
     protected void searchNow() throws Exception {
       clearFeedList();
+      setStatusMessage("Connecting...");
       XmlRpcClient client = getXmlRpcClient();
       //Get the list of ids
       Vector args = new Vector();
@@ -146,6 +155,7 @@ public class SearchDialog extends Dialog {
       args.add("sitename");
       //args.add(new Integer(30));
       Vector ids = (Vector)client.execute("syndic8.FindFeeds",args);
+      setStatusMessage("Found "+ids.size()+" result(s), asking for details...");
       //Get the descriptions of the feeds
       Vector fields = new Vector();
       fields.add("sitename");
@@ -157,11 +167,13 @@ public class SearchDialog extends Dialog {
       args.add(ids);
       args.add(fields);
       Vector infos = (Vector)client.execute("syndic8.GetFeedInfo",args);
+      setStatusMessage("Showing details...");
       Iterator iterator = infos.iterator();
       while(iterator.hasNext()) {
           Hashtable info = (Hashtable)iterator.next();
           addFeedInList(info);
       }
+      setStatusMessage("Ready.");
     }
     
     protected void clearFeedList() {
@@ -187,6 +199,16 @@ public class SearchDialog extends Dialog {
         ArrayList al = (ArrayList)list.getData();
         al.add(info);
         list.add(name);
+    }
+    
+    protected void setStatusMessage(String message) {
+        statusBar.setText(message);
+        System.out.println(message);
+    }
+
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent,IDialogConstants.OPEN_ID,"Add Selected",false);
+        createButton(parent,IDialogConstants.OK_ID,IDialogConstants.OK_LABEL,false);
     }
 
 }
