@@ -5,11 +5,13 @@
 package org.jnegre.allthenews.view;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.Item;
@@ -21,11 +23,10 @@ import org.jnegre.allthenews.RssListener;
  */
 public class HeadlineView extends ViewPart implements RssListener {
 	
-	Table itemTable;
+	Table table;
 
 	public HeadlineView() {
 		super();
-		Plugin.getDefault().addRssListener(this);
 	}
 
 	public void dispose() {
@@ -33,21 +34,24 @@ public class HeadlineView extends ViewPart implements RssListener {
 		super.dispose();
 	}
 
-	
-	public void createPartControl(Composite parent) {
-        itemTable = new Table(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        new TableColumn(itemTable, SWT.LEFT);
-        new TableColumn(itemTable, SWT.CENTER);
-        new TableColumn(itemTable, SWT.LEFT);
-        itemTable.setHeaderVisible(true);
+	private TableColumn createColumn(int style, int width, String text) {
+		TableColumn col = new TableColumn(table, style);
+		col.setWidth(width);
+		col.setText(text);
+		return col;
 	}
 	
+	public void createPartControl(Composite parent) {
+        table = new Table(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        createColumn(SWT.LEFT, 120, "Publication Date");
+        createColumn(SWT.CENTER, 20, "");
+        createColumn(SWT.LEFT, 600, "Title");
+        table.setHeaderVisible(true);
+        Plugin.getDefault().addRssListener(this);
+	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
 	public void setFocus() {
-		// TODO Auto-generated method stub
+		table.setFocus();
 	}
 	/* (non-Javadoc)
 	 * @see org.jnegre.allthenews.RssListener#onChannelListChanged(java.util.ArrayList)
@@ -65,19 +69,33 @@ public class HeadlineView extends ViewPart implements RssListener {
 	 * @see org.jnegre.allthenews.RssListener#onChannelSelected(org.jnegre.allthenews.Channel)
 	 */
 	public void onChannelSelected(Channel channel) {
-		// TODO Auto-generated method stub
-		
+		fillTable(channel);
 	}
 	/* (non-Javadoc)
 	 * @see org.jnegre.allthenews.RssListener#onItemSelected(org.jnegre.allthenews.Item)
 	 */
-	public void onItemSelected(Item tiem) {
-		// TODO Auto-generated method stub
+	public void onItemSelected(Item item) {
+		fillTable(item.getChannel());
+		int index = item.getChannel().getItems().indexOf(item);
+		table.setSelection(index);
 	}
 	/* (non-Javadoc)
 	 * @see org.jnegre.allthenews.RssListener#onItemStatusChanged(org.jnegre.allthenews.Item)
 	 */
-	public void onItemStatusChanged(Item tiem) {
+	public void onItemStatusChanged(Item item) {
 		// TODO Auto-generated method stub
+	}
+	
+	private void fillTable(Channel channel) {
+		Iterator items = channel.getItems().iterator();
+		table.removeAll();
+		while(items.hasNext()) {
+			Item item = (Item)items.next();
+			TableItem tableItem = new TableItem(table,SWT.NONE);
+			tableItem.setText(0,item.getDate());
+			String image = item.isReadFlag()? Plugin.ICON_LED_DARK_GREEN : Plugin.ICON_LED_LIGHT_GREEN;
+			tableItem.setImage(1,Plugin.getDefault().getImageRegistry().get(image));
+			tableItem.setText(2,item.getUsableTitle());
+		}
 	}
 }
