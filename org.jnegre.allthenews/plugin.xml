@@ -53,6 +53,14 @@
             class="org.jnegre.allthenews.view.HeadlineView"
             id="org.jnegre.allthenews.view.headline">
       </view>
+      <view
+            name="News Browser"
+            icon="icons\news.gif"
+            category="org.jnegre.allthenews.viewcategory"
+            class="org.jnegre.allthenews.view.BrowserView"
+            id="org.jnegre.allthenews.view.browser">
+      </view>
+
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
