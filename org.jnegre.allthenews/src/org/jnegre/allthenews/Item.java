@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * @author jnegre - http://www.jnegre.org/
@@ -67,7 +69,6 @@ public class Item {
 
     protected String readValue(String elementName, Element parent, int type) {
         Element element = (Element)parent.getElementsByTagName(elementName).item(0);
-        Node node;
         if(element != null) {
 
             switch(type) {
@@ -77,12 +78,15 @@ public class Item {
                     }
             }
     
-            node = element.getFirstChild();
-            if(node != null) {
-                return node.getNodeValue();
-            } else {
-                return null;
+            NodeList children = element.getChildNodes();
+            StringBuffer buffer = new StringBuffer();
+            for(int i=0; i<children.getLength(); i++) {
+            	Node node = children.item(i);
+            	if(node.getNodeType()==Node.TEXT_NODE || node.getNodeType()==Node.CDATA_SECTION_NODE) {
+            		buffer.append(((Text)node).getData());
+            	}
             }
+            return buffer.toString().trim();
         } else {
             return null;
         }

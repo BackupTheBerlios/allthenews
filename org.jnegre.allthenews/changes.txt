@@ -1,4 +1,9 @@
+3.0.2
+
+	* Fix for bug 2363 (found by Ilja Preuss)
+
 3.0.1
+
 	* Shows the progression of the download in the browser view
 	* Possibility to show the description of an item before following the link
 	* Fixed a bug detected by Leif Frenzel
@@ -12,7 +17,6 @@
 	* Ability to force refresh from proxies (useful if your proxy don' t want to give you FRESH news)
 	* Prototype of a tool to find the RSS feeds you like with the help of syndic8.com RPC (see in the preference page)
 	* The state of read items is saved on Eclipse shutdown
-
 
 2.0.1
 
