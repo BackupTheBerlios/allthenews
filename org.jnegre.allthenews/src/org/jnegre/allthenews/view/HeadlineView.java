@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
+import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
@@ -103,8 +104,8 @@ public class HeadlineView extends ViewPart implements RssListener {
 			Item item = (Item)items.next();
 			TableItem tableItem = new TableItem(table,SWT.NONE);
 			tableItem.setText(0,item.getDate());
-			String image = item.isReadFlag()? Plugin.ICON_LED_DARK_GREEN : Plugin.ICON_LED_LIGHT_GREEN;
-			tableItem.setImage(1,Plugin.getDefault().getImageRegistry().get(image));
+			String image = item.isReadFlag()? IconManager.ICON_STATUS_READ : IconManager.ICON_STATUS_UNREAD;
+			tableItem.setImage(1,IconManager.getImage(image));
 			tableItem.setText(2,item.getUsableTitle());
 			tableItem.setData(item);
 		}

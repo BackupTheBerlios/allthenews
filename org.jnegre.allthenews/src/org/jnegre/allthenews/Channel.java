@@ -131,20 +131,6 @@ public class Channel {
         return title;
     }
 
-    /** @deprecated */
-    public TableItem toTableItem(Table table) {
-        TableItem tableItem = new TableItem(table, 0);
-        tableItem.setData(this);
-        fillTableItem(tableItem);
-        return tableItem;
-    }
-
-    /** @deprecated */
-    public void fillTableItem(TableItem tableItem) {
-        tableItem.setImage(0,getIcon());
-        tableItem.setText(1,this.getTitle());
-    }
-
     /**
      * Returns the refreshing.
      * @return boolean
@@ -159,21 +145,6 @@ public class Channel {
      */
     public void setRefreshing(boolean refreshing) {
         this.refreshing = refreshing;
-    }
-
-    /** @deprecated */
-    public Image getIcon() {
-        String iconId;
-        if(refreshing) {
-            iconId = Plugin.ICON_REFRESH;
-        } else if(errorMessage == null && !unread){
-            iconId = Plugin.ICON_OK;
-        } else if(errorMessage == null && unread){
-            iconId = Plugin.ICON_UNREAD;
-        } else {
-            iconId = Plugin.ICON_ALERT;
-        }
-        return Plugin.getDefault().getImageRegistry().getDescriptor(iconId).createImage();
     }
 
     /**

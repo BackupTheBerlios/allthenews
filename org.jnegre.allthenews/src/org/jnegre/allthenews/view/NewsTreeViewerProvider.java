@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.jnegre.allthenews.Channel;
+import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
 
@@ -71,20 +72,20 @@ public class NewsTreeViewerProvider
 		if(element instanceof Channel) {
 			Channel channel = (Channel)element;
 			if(channel.isRefreshing()) {
-				iconId = Plugin.ICON_REFRESH;
+				iconId = IconManager.ICON_STATUS_REFRESH;
 			} else if(channel.getErrorMessage()!=null) {
-				iconId = Plugin.ICON_LED_RED;
+				iconId = IconManager.ICON_STATUS_ERROR;
 			} else if(channel.isUnread()) {
-				iconId = Plugin.ICON_LED_LIGHT_GREEN;
+				iconId = IconManager.ICON_STATUS_UNREAD;
 			} else {
-				iconId = Plugin.ICON_LED_DARK_GREEN;
+				iconId = IconManager.ICON_STATUS_READ;
 			}
 		} else if(element instanceof Item) {
 			Item item = (Item)element;
 			if(item.isReadFlag()) {
-				iconId = Plugin.ICON_LED_DARK_GREEN;
+				iconId = IconManager.ICON_STATUS_READ;
 			} else {
-				iconId = Plugin.ICON_LED_LIGHT_GREEN;
+				iconId = IconManager.ICON_STATUS_UNREAD;
 			}
 		} else {
 			return null;

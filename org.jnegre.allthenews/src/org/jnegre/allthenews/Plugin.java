@@ -11,6 +11,7 @@ import java.util.TimerTask;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -19,6 +20,8 @@ import org.jnegre.allthenews.pref.ListEncoder;
 
 public class Plugin extends AbstractUIPlugin {
 
+	public static final String BACKENDS_SECTION = "backends";
+	
     public static final String VERSION_PREFERENCE = "org.jnegre.allthenews.version";
 	public static final String REFRESH_INTERVAL_PREFERENCE = "org.jnegre.allthenews.refreshinterval";
 	public static final String BACKENDS_PREFERENCE = "org.jnegre.allthenews.backends";
@@ -37,18 +40,6 @@ public class Plugin extends AbstractUIPlugin {
     public static final String DEFAULT_BROWSER_TYPE = "2";
     public static final String DEFAULT_BANNED_ITEMS = "";
 	public static final boolean DEFAULT_FORCE_CACHE = false;
-
-	//Icons
-	public static final String ICON_ALERT = "alert.gif";
-	public static final String ICON_OK = "ok.gif";
-	public static final String ICON_REFRESH = "refresh.gif";
-    public static final String ICON_UNREAD = "unread.gif";
-
-    public static final String ICON_LINK = "link.gif";
-
-    public static final String ICON_LED_DARK_GREEN = "dark_green_led.png";
-    public static final String ICON_LED_LIGHT_GREEN = "light_green_led.png";
-    public static final String ICON_LED_RED = "red_led.png";
 
     //User-Agent
     public static String userAgent;
@@ -120,17 +111,6 @@ public class Plugin extends AbstractUIPlugin {
         getDefault().getLog().log(new Status(IStatus.INFO,getDefault().getDescriptor().getUniqueIdentifier(),IStatus.OK,message,t));
     }
 
-    private ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/";
-        try {
-            URL url = new URL(getDescriptor().getInstallURL(), iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (java.net.MalformedURLException e) {
-            return ImageDescriptor.getMissingImageDescriptor();
-        }
-    }
-
-
     /*
      * @see AbstractUIPlugin#initializeDefaultPreferences(IPreferenceStore)
      */
@@ -145,17 +125,7 @@ public class Plugin extends AbstractUIPlugin {
 
 	protected ImageRegistry createImageRegistry() {
 		ImageRegistry registry = super.createImageRegistry();
-		//old icons
-		registry.put(ICON_ALERT,getImageDescriptor(ICON_ALERT));
-		registry.put(ICON_OK,getImageDescriptor(ICON_OK));
-		registry.put(ICON_REFRESH,getImageDescriptor(ICON_REFRESH));
-        registry.put(ICON_UNREAD,getImageDescriptor(ICON_UNREAD));
-        //new 3.0 icons
-        registry.put(ICON_LINK,getImageDescriptor(ICON_LINK));
-        
-        registry.put(ICON_LED_DARK_GREEN,getImageDescriptor(ICON_LED_DARK_GREEN));
-        registry.put(ICON_LED_LIGHT_GREEN,getImageDescriptor(ICON_LED_LIGHT_GREEN));
-        registry.put(ICON_LED_RED,getImageDescriptor(ICON_LED_RED));
+		IconManager.populateImageRegistry(registry);
 		return registry;
 	}
 
@@ -254,7 +224,7 @@ public class Plugin extends AbstractUIPlugin {
     public void updateChannelList() {
         synchronized(channelLock) {
             channelList = new ArrayList();
-    
+            //old system
             String backends = this.getPreferenceStore().getString(Plugin.BACKENDS_PREFERENCE);
             String[] entries = ListEncoder.decode(backends);
             for (int i = 0; i < entries.length; i++) {

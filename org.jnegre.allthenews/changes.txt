@@ -2,7 +2,7 @@
 
 	* Compatible with Eclipse 3.0, won't work with previous versions
 	* Internal browser for all platform
-	* New perspective and views (the old view will be removed before the 3.0.0 goes final)
+	* New perspective and views
 	* New icon set
 	* Ability to force refresh from proxies (useful if your proxy don' t want to give you FRESH news)
 	* Prototype of a tool to find the RSS feeds you like with the help of syndic8.com RPC (see in the preference page)

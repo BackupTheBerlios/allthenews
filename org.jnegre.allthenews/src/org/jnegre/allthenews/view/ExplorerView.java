@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
+import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
@@ -100,7 +101,8 @@ public class ExplorerView extends ViewPart implements RssListener {
 	}
 
     private void createActions() {
-        refreshAction = new Action("Refresh", Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_REFRESH)) {
+    	//refresh
+        refreshAction = new Action("Refresh", IconManager.getImageDescriptor(IconManager.ICON_ACTION_REFRESH)) {
             public void run() {
                 Plugin.getDefault().update();
             }

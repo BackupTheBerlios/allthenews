@@ -33,7 +33,7 @@
       </category>
       <view
             name="News Explorer"
-            icon="icons\red_led.png"
+            icon="icons\news.gif"
             category="org.jnegre.allthenews.viewcategory"
             class="org.jnegre.allthenews.view.ExplorerView"
             id="org.jnegre.allthenews.view.explorer">

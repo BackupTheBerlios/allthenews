@@ -21,6 +21,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
+import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
@@ -116,7 +117,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         forwardAction.setToolTipText("Go Forward");
     	
     	//refresh
-        refreshAction = new Action("Refresh", Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_REFRESH)) {
+        refreshAction = new Action("Refresh", IconManager.getImageDescriptor(IconManager.ICON_ACTION_REFRESH)) {
             public void run() {
                 (BrowserView.this).browser.refresh();
             }
@@ -126,7 +127,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         //link
         linkAction = new Action("Link", IAction.AS_CHECK_BOX) {
         };
-        linkAction.setImageDescriptor(Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_LINK));
+        linkAction.setImageDescriptor(IconManager.getImageDescriptor(IconManager.ICON_ACTION_LINK));
         linkAction.setChecked(linkActionInitState);
         linkAction.setToolTipText("Link With Views");
 
