@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -47,6 +49,12 @@ public class HeadlineView extends ViewPart implements RssListener {
         createColumn(SWT.CENTER, 20, "");
         createColumn(SWT.LEFT, 600, "Title");
         table.setHeaderVisible(true);
+        table.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+                Item item = (Item) e.item.getData();
+                Plugin.getDefault().notifyItemSelected(item,HeadlineView.this);
+			}
+        });
         Plugin.getDefault().addRssListener(this);
 	}
 	
@@ -83,7 +91,9 @@ public class HeadlineView extends ViewPart implements RssListener {
 	 * @see org.jnegre.allthenews.RssListener#onItemStatusChanged(org.jnegre.allthenews.Item)
 	 */
 	public void onItemStatusChanged(Item item) {
-		// TODO Auto-generated method stub
+		fillTable(item.getChannel());
+		int index = item.getChannel().getItems().indexOf(item);
+		table.setSelection(index);
 	}
 	
 	private void fillTable(Channel channel) {
@@ -96,6 +106,7 @@ public class HeadlineView extends ViewPart implements RssListener {
 			String image = item.isReadFlag()? Plugin.ICON_LED_DARK_GREEN : Plugin.ICON_LED_LIGHT_GREEN;
 			tableItem.setImage(1,Plugin.getDefault().getImageRegistry().get(image));
 			tableItem.setText(2,item.getUsableTitle());
+			tableItem.setData(item);
 		}
 	}
 }
