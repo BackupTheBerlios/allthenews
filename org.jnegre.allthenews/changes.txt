@@ -1,3 +1,7 @@
+3.0.3
+
+	* Workaround a bug in Crimson (should fix encoding problems on some feeds)
+
 3.0.2
 
 	* Fix for bug 2363 (found by Ilja Preuss)

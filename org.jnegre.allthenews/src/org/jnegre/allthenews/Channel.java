@@ -1,6 +1,7 @@
 package org.jnegre.allthenews;
 
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -64,9 +65,25 @@ public class Channel {
         		conn.setRequestProperty("Cache-Control", "no-cache");
             }
             InputStream stream = conn.getInputStream();
+            
+            /* workaround a bug of crimson (it seems to ignore the encoding
+             * if it does not get it the first time it reads bytes from
+             * the stream. We use a PushbackInputStream to be sure that the
+             * encoding declaration is in the buffer)
+             */
+            PushbackInputStream pbStream = new PushbackInputStream(stream,64);
+            byte[] buffer = new byte[64];
+            int pos = 0;
+            while(pos != 64) {
+            	pos += pbStream.read(buffer, pos, 64-pos);
+            }
+            pbStream.unread(buffer);
+            //end workaround
+            
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = parser.parse(new InputSource(stream));
-            stream.close();
+            InputSource inputSource = new InputSource(pbStream);
+            Document doc = parser.parse(inputSource);
+            pbStream.close();
             NodeList itemNodes = doc.getElementsByTagName("item");
             for (int i = 0; i < itemNodes.getLength(); i++) {
                 Item aNewItem = new Item(this, (Element) itemNodes.item(i));
