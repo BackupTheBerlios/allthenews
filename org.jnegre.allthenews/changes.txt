@@ -1,6 +1,7 @@
 3.0.2
 
 	* Fix for bug 2363 (found by Ilja Preuss)
+	* Status bar for the browser view
 
 3.0.1
 
