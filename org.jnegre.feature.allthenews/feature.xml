@@ -30,7 +30,7 @@ See http://www.jnegre.org/cpl1_0.html
 
    <plugin
          id="org.jnegre.allthenews"
-         download-size="0"
+         download-size="153000"
          install-size="0"
          version="3.0.0"/>
 
