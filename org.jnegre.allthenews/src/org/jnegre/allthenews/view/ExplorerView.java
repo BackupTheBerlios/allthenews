@@ -85,11 +85,9 @@ public class ExplorerView extends ViewPart implements RssListener {
 	public void onChannelSelected(Channel channel) {
 		System.out.println("Explorer.onChannelSelected -> "+channel);
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onItemSelected(org.jnegre.allthenews.Item)
-	 */
+
 	public void onItemSelected(Item tiem) {
-		// TODO Auto-generated method stub
+		// NOP
 	}
 
 	public void onItemStatusChanged(final Item item) {

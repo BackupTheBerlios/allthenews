@@ -62,35 +62,25 @@ public class HeadlineView extends ViewPart implements RssListener {
 	public void setFocus() {
 		table.setFocus();
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onChannelListChanged(java.util.ArrayList)
-	 */
+
 	public void onChannelListChanged(ArrayList channels) {
-		// TODO Auto-generated method stub
+		// NOP
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onChannelStatusChanged(org.jnegre.allthenews.Channel)
-	 */
+
 	public void onChannelStatusChanged(Channel channel) {
-		// TODO Auto-generated method stub
+		// NOP
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onChannelSelected(org.jnegre.allthenews.Channel)
-	 */
+
 	public void onChannelSelected(Channel channel) {
 		fillTable(channel);
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onItemSelected(org.jnegre.allthenews.Item)
-	 */
+
 	public void onItemSelected(Item item) {
 		fillTable(item.getChannel());
 		int index = item.getChannel().getItems().indexOf(item);
 		table.setSelection(index);
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onItemStatusChanged(org.jnegre.allthenews.Item)
-	 */
+
 	public void onItemStatusChanged(Item item) {
 		fillTable(item.getChannel());
 		int index = item.getChannel().getItems().indexOf(item);
