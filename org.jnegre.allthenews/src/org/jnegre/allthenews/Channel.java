@@ -168,11 +168,7 @@ public class Channel {
     }
     
     public String getUID() {
-    	return computeUID(url);
+    	return "CHA" + url;
     }
 
-    public static String computeUID(String anUrl) {
-    	return "CHA" + anUrl;
-    }
-    
 }
