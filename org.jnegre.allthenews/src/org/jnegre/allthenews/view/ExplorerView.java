@@ -46,8 +46,12 @@ public class ExplorerView extends ViewPart implements RssListener {
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selected = ((StructuredSelection)event.getSelection()).getFirstElement();
-				if(selected != null && selected instanceof Channel) {
-					Plugin.getDefault().notifyChannelSelected((Channel)selected);
+				if(selected != null) {
+					if(selected instanceof Channel) {
+						Plugin.getDefault().notifyChannelSelected((Channel)selected);
+					} else if(selected instanceof Item) {
+						Plugin.getDefault().notifyItemSelected((Item)selected);
+					}
 				}
 			}
 		});

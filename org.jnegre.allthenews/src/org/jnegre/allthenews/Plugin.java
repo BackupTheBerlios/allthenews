@@ -203,6 +203,13 @@ public class Plugin extends AbstractUIPlugin {
 		}
 	}
 
+	public void notifyItemSelected(Item item) {
+		Iterator iterator = rssListeners.iterator();
+		while(iterator.hasNext()) {
+			((RssListener)iterator.next()).onItemSelected(item);
+		}
+	}
+
     public void setTimer() {
         if(timer != null) {
             timer.cancel();

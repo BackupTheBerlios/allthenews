@@ -28,6 +28,7 @@ public void createInitialLayout(IPageLayout layout) {
         IFolderLayout right =
             layout.createFolder("right", IPageLayout.RIGHT, 0.70f,editorArea);
         right.addView("org.jnegre.allthenews.view");
+        right.addView("org.jnegre.allthenews.view.browser");
         //FIXME should use the new browser control
         /*
         IFolderLayout right =
