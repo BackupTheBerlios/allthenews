@@ -39,6 +39,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
     private Action forwardAction;
     private Action refreshAction;
     private Action linkAction;
+    private Action clearAction;
 
     private boolean linkActionInitState = false;
 	
@@ -128,6 +129,15 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         linkAction.setImageDescriptor(Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_LINK));
         linkAction.setChecked(linkActionInitState);
         linkAction.setToolTipText("Link With Views");
+
+        //clear
+        clearAction = new Action("Clear", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE)) {
+            public void run() {
+                (BrowserView.this).browser.setUrl("about:blank");
+            }
+        };
+        clearAction.setToolTipText("Clear");
+
     }
 
     private void createMenu() {
@@ -141,6 +151,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         mgr.add(forwardAction);
         mgr.add(refreshAction);
         mgr.add(linkAction);
+        mgr.add(clearAction);
     }
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
