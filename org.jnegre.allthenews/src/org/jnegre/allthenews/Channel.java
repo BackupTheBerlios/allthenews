@@ -124,6 +124,7 @@ public class Channel {
         return title;
     }
 
+    /** @deprecated */
     public TableItem toTableItem(Table table) {
         TableItem tableItem = new TableItem(table, 0);
         tableItem.setData(this);
@@ -131,6 +132,7 @@ public class Channel {
         return tableItem;
     }
 
+    /** @deprecated */
     public void fillTableItem(TableItem tableItem) {
         tableItem.setImage(0,getIcon());
         tableItem.setText(1,this.getTitle());
@@ -152,6 +154,7 @@ public class Channel {
         this.refreshing = refreshing;
     }
 
+    /** @deprecated */
     public Image getIcon() {
         String iconId;
         if(refreshing) {
