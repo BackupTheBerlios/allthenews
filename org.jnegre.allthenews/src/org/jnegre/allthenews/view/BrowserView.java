@@ -58,6 +58,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
     private Action backAction;
     private Action forwardAction;
     private Action refreshAction;
+    private Action openInExternalBrowserAction;
     private Action clearAction;
     private Action linkAction;
     private Action showDescritionAction;
@@ -167,7 +168,24 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
             }
         };
         refreshAction.setToolTipText("Refresh"); //$NON-NLS-1$
-        
+
+    	//refresh
+        openInExternalBrowserAction = new Action("Open", IconManager.getImageDescriptor(IconManager.ICON_ACTION_EXTERNAL_BROWSER)) { //$NON-NLS-1$
+            public void run() {
+            	try {
+            	Runtime.getRuntime().exec(
+                        new String[] {
+                            Plugin.getDefault().getPreferenceStore().getString(Plugin.BROWSER_PREFERENCE),
+							(BrowserView.this).browser.getUrl()
+							});
+            	} catch(Exception e){
+            		Plugin.logError("Error while trying to open url in external browser",e);
+					
+            	}
+            }
+        };
+        openInExternalBrowserAction.setToolTipText("Open In External Browser"); //$NON-NLS-1$
+
         //clear
         clearAction = new Action("Clear", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE)) { //$NON-NLS-1$
             public void run() {
@@ -199,6 +217,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
         mgr.add(backAction);
         mgr.add(forwardAction);
         mgr.add(refreshAction);
+        mgr.add(openInExternalBrowserAction);
         mgr.add(linkAction);
         mgr.add(clearAction);
     }

@@ -34,6 +34,7 @@ public class IconManager {
 	private static final String LOC_LED_YELLOW = "led_yellow.gif";
 	private static final String LOC_LINK = "link.gif";
 	private static final String LOC_REFRESH = "refresh.gif";
+	private static final String LOC_EXTERNAL_BROWSER = "external_browser.gif";
 
 	//list of all icon files to put in the ImageRegistry
 	private static final String[] LOCATIONS = new String[]{
@@ -42,7 +43,8 @@ public class IconManager {
 			LOC_LED_RED,
 			LOC_LED_YELLOW,
 			LOC_LINK,
-			LOC_REFRESH
+			LOC_REFRESH,
+			LOC_EXTERNAL_BROWSER
 	};
 
 	//public names
@@ -53,6 +55,7 @@ public class IconManager {
 	
 	public static final String ICON_ACTION_REFRESH = LOC_REFRESH;
 	public static final String ICON_ACTION_LINK = LOC_LINK;
+	public static final String ICON_ACTION_EXTERNAL_BROWSER = LOC_EXTERNAL_BROWSER;
 	
 	/**
 	 * Populates an image registry with all the locations
