@@ -11,6 +11,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.widgets.Composite;
@@ -29,12 +31,14 @@ import org.jnegre.allthenews.RssListener;
 /**
  * @author Jérôme Nègre
  */
-public class BrowserView extends ViewPart implements RssListener, TitleListener {
+public class BrowserView extends ViewPart implements RssListener, TitleListener, ProgressListener {
 
 	private static final String LINK_MEMENTO_KEY = "link";
 	
 	Browser browser;
 	private boolean uiReady = false;
+	private String title = null;
+	private int loadFraction = 100;
 	
     private Action backAction;
     private Action forwardAction;
@@ -52,6 +56,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 	public void createPartControl(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
 		browser.addTitleListener(this);
+		browser.addProgressListener(this);
 		uiReady = true;
 
         createActions();
@@ -92,7 +97,10 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 	}
 
 	public void changed(TitleEvent event) {
-		this.setTitle(event.title);
+		this.title = event.title;
+		if(loadFraction == 100) {
+			this.setTitle(this.title);
+		}
 	}
 	
     private void createActions() {
@@ -164,5 +172,22 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putInteger(LINK_MEMENTO_KEY,linkAction.isChecked()?1:0);
+	}
+
+	public void changed(ProgressEvent event) {
+		if(event.total!=0) {
+			this.loadFraction = (100*event.current)/event.total;
+		} else {
+			this.loadFraction = 100;
+		}
+		if(loadFraction == 100) {
+			this.setTitle(this.title);
+		} else {
+			this.setTitle("Loading: "+this.loadFraction+"%");
+		}
+	}
+
+	public void completed(ProgressEvent event) {
+		this.setTitle(this.title);
 	}
 }
