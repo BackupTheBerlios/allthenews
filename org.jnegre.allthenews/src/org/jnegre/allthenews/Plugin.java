@@ -27,6 +27,7 @@ public class Plugin extends AbstractUIPlugin {
     public static final String BROWSER_TYPE_PREFERENCE = "org.jnegre.allthenews.browser.type";
     public static final String VIEW_TYPE_PREFERENCE = "org.jnegre.allthenews.viewtype";
     public static final String BANNED_ITEMS_PREFERENCE = "org.jnegre.allthenews.banneditems";
+    public static final String FORCE_CACHE_PREFERENCE = "org.jnegre.allthenews.forcecache";
 
 	//Default values
     public static final int CURRENT_VERSION = 1;
@@ -38,6 +39,7 @@ public class Plugin extends AbstractUIPlugin {
     public static final String DEFAULT_BROWSER_TYPE = "2";
     public static final String DEFAULT_VIEW_TYPE = "1";
     public static final String DEFAULT_BANNED_ITEMS = "";
+	public static final boolean DEFAULT_FORCE_CACHE = false;
 
 	//Icons
 	public static final String ICON_ALERT = "alert.gif";
@@ -142,6 +144,7 @@ public class Plugin extends AbstractUIPlugin {
         store.setDefault(BROWSER_TYPE_PREFERENCE,DEFAULT_BROWSER_TYPE);
         store.setDefault(VIEW_TYPE_PREFERENCE,DEFAULT_VIEW_TYPE);
         store.setDefault(BANNED_ITEMS_PREFERENCE,DEFAULT_BANNED_ITEMS);
+        store.setDefault(FORCE_CACHE_PREFERENCE,DEFAULT_FORCE_CACHE);
     }
 
 	protected ImageRegistry createImageRegistry() {

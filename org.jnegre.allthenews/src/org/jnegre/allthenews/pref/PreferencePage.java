@@ -1,5 +1,6 @@
 package org.jnegre.allthenews.pref;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -16,6 +17,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
     protected RadioGroupFieldEditor fe9;
     protected IntegerFieldEditor refreshFE;
     protected RadioGroupFieldEditor viewTypeFE;
+    protected BooleanFieldEditor forceCacheFE;
 
     public PreferencePage() {
         super("All The News", FieldEditorPreferencePage.GRID);
@@ -40,6 +42,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
         refreshFE = new IntegerFieldEditor(Plugin.REFRESH_INTERVAL_PREFERENCE,"Refresh interval (minutes)", getFieldEditorParent());
         refreshFE.setValidRange(0,10000);
 
+        forceCacheFE = new BooleanFieldEditor(Plugin.FORCE_CACHE_PREFERENCE,"Force refresh from proxy", getFieldEditorParent());
+
         viewTypeFE =
             new RadioGroupFieldEditor(
                 Plugin.VIEW_TYPE_PREFERENCE,
@@ -49,12 +53,12 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
                 "Tab View", "2" }, { "Tree View", "3" }
         }, getFieldEditorParent(), true);
 
-
         addField(siteListFE);
         addField(banListFE);
         addField(fe9);
         addField(browserAppFE);
         addField(refreshFE);
+        addField(forceCacheFE);
         addField(viewTypeFE);
     }
 

@@ -53,6 +53,10 @@ public class Channel {
             
             URLConnection conn = new URL(url).openConnection();
             conn.setRequestProperty("User-Agent", Plugin.userAgent);
+            if(prefs.getBoolean(Plugin.FORCE_CACHE_PREFERENCE)) {
+            	conn.setRequestProperty("Pragma", "no-cache");
+        		conn.setRequestProperty("Cache-Control", "no-cache");
+            }
             InputStream stream = conn.getInputStream();
             DOMParser parser = new DOMParser();
             parser.setFeature("http://apache.org/xml/features/allow-java-encodings",true);
