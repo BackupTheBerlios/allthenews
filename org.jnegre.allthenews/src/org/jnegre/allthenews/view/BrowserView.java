@@ -14,7 +14,10 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
@@ -27,6 +30,8 @@ import org.jnegre.allthenews.RssListener;
  */
 public class BrowserView extends ViewPart implements RssListener, TitleListener {
 
+	private static final String LINK_MEMENTO_KEY = "link";
+	
 	Browser browser;
 	private boolean uiReady = false;
 	
@@ -35,6 +40,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
     private Action refreshAction;
     private Action linkAction;
 
+    private boolean linkActionInitState = false;
 	
 	public BrowserView() {
 		super();
@@ -117,6 +123,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         linkAction = new Action("Link", IAction.AS_CHECK_BOX) {
         };
         linkAction.setImageDescriptor(Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_LINK));
+        linkAction.setChecked(linkActionInitState);
     }
 
     private void createMenu() {
@@ -132,4 +139,18 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         mgr.add(linkAction);
     }
 
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		if(memento != null) {
+			Integer link = memento.getInteger(LINK_MEMENTO_KEY);
+			if(link != null && link.intValue() == 1) {
+				linkActionInitState = true;
+			}
+		}
+	}
+
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		memento.putInteger(LINK_MEMENTO_KEY,linkAction.isChecked()?1:0);
+	}
 }
