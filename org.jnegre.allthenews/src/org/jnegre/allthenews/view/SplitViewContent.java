@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.update.internal.ui.UpdatePerspective;
+//import org.eclipse.update.internal.ui.UpdatePerspective;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.views.IEmbeddedWebBrowser;
+//import org.eclipse.update.internal.ui.views.IEmbeddedWebBrowser;
 import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
@@ -97,12 +97,13 @@ public class SplitViewContent implements ViewContent {
                     Item item = (Item) e.item.getData();
                     if (win32 && useEmbedded) {
                         IWorkbenchPage page = UpdateUI.getActivePage();
-                        try {
-                            IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
-                            ((IEmbeddedWebBrowser) part).openTo(item.getUsableLink());
-                        } catch (PartInitException ex) {
-                            UpdateUI.logException(ex);
-                        }
+                        //FIXME use internal browser
+//                        try {
+//                            IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
+//                            ((IEmbeddedWebBrowser) part).openTo(item.getUsableLink());
+//                        } catch (PartInitException ex) {
+//                            UpdateUI.logException(ex);
+//                        }
                     } else {
                         Runtime.getRuntime().exec(
                             new String[] {
