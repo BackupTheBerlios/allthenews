@@ -1,6 +1,8 @@
 3.0.3
 
 	* Workaround a bug in Crimson (should fix encoding problems on some feeds)
+	* Possibility to open a page in an external browser
+	* More fault-tolerant date parser
 
 3.0.2
 
