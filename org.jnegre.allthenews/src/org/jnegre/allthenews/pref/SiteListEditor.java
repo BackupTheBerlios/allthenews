@@ -130,7 +130,7 @@ public class SiteListEditor extends FieldEditor {
 	private void createButtons(Composite buttonBox) {
 		addButton = createPushButton(buttonBox, "ListEditor.add");//$NON-NLS-1$
 		//TODO use my bundle ?
-		searchButton = createPushButton(buttonBox, "SiteListEditor.search");//$NON-NLS-1$
+		searchButton = createPushButton(buttonBox, "Search (experimental)");
 		removeButton = createPushButton(buttonBox, "ListEditor.remove");//$NON-NLS-1$
 		upButton = createPushButton(buttonBox, "ListEditor.up");//$NON-NLS-1$
 		downButton = createPushButton(buttonBox, "ListEditor.down");//$NON-NLS-1$
@@ -202,15 +202,6 @@ public class SiteListEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doLoad() {
-		/*
-		if (list != null) {
-			String s = getPreferenceStore().getString(getPreferenceName());
-			String[] array = parseString(s);
-			for (int i = 0; i < array.length; i++) {
-				list.add(array[i]);
-			}
-		}
-		*/
 		if (list != null) {
 			channels = ChannelStore.getChannels();
 			for (int i = 0; i < channels.size(); i++) {
@@ -222,33 +213,20 @@ public class SiteListEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doLoadDefault() {
-		/*
 		if (list != null) {
 			list.removeAll();
-			String s = getPreferenceStore().getDefaultString(
-					getPreferenceName());
-			String[] array = parseString(s);
-			for (int i = 0; i < array.length; i++) {
-				list.add(array[i]);
+			channels = ChannelStore.getDefaultChannels();
+			for (int i = 0; i < channels.size(); i++) {
+				list.add(((Channel)channels.get(i)).getTitle());
 			}
+			setPresentsDefaultValue(false);
 		}
-		//XXX
-		Plugin.getDefault().updateChannelList();
-		*/
 	}
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
 	protected void doStore() {
-		/*
-		String s = createList(list.getItems());
-		if (s != null)
-			getPreferenceStore().setValue(getPreferenceName(), s);
-		//XXX
-		Plugin.getDefault().updateChannelList();
-		*/
 		ChannelStore.setChannels(channels);
-		//XXX
 		Plugin.getDefault().updateChannelList();
 	}
 	/**
