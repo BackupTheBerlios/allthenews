@@ -62,7 +62,13 @@ public class Item {
             }
             this.date = dateFormat.format(theDate);
         } catch(Exception e) {
-            this.date = e.toString();
+            if(pubDate != null) {
+            	this.date = pubDate;
+            } else if(dcDate != null) {
+            	this.date = dcDate;
+            } else {
+            	this.date = e.toString();
+            }
             Plugin.logInfo("Unable to parse date",e);
         }
     }
