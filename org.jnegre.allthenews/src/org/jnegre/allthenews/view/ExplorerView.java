@@ -27,17 +27,14 @@ public class ExplorerView extends ViewPart implements RssListener {
 	
 	private TreeViewer treeViewer;
 	private NewsTreeViewerProvider provider;
-	private boolean uiReady = false;
 
     private Action refreshAction;
 
 	public ExplorerView() {
 		super();
-		Plugin.getDefault().addRssListener(this);
 	}
 
 	public void dispose() {
-		uiReady = false;
 		Plugin.getDefault().removeRssListener(this);
 		super.dispose();
 	}
@@ -59,12 +56,13 @@ public class ExplorerView extends ViewPart implements RssListener {
 				}
 			}
 		});
-		uiReady = true;
-		treeViewer.setInput(Plugin.getDefault());
 
         createActions();
         createMenu();
         createToolBar();
+
+        Plugin.getDefault().addRssListener(this);
+		treeViewer.setInput(Plugin.getDefault());
 	}
 
 	public void setFocus() {
@@ -72,19 +70,15 @@ public class ExplorerView extends ViewPart implements RssListener {
 	}
 
 	public void onChannelListChanged(ArrayList channels) {
-		if(uiReady) {
-			treeViewer.setInput(Plugin.getDefault());
-		}
+		treeViewer.setInput(Plugin.getDefault());
 	}
 	
 	public void onChannelStatusChanged(final Channel channel) {
-		if(uiReady) {
-			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					treeViewer.refresh(channel);
-				}
-			});
-		}
+		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				treeViewer.refresh(channel);
+			}
+		});
 	}
 
 	public void onChannelSelected(Channel channel) {
@@ -98,17 +92,15 @@ public class ExplorerView extends ViewPart implements RssListener {
 	}
 
 	public void onItemStatusChanged(final Item item) {
-		if(uiReady) {
-			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					treeViewer.refresh(item);
-				}
-			});
-		}
+		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				treeViewer.refresh(item);
+			}
+		});
 	}
 
     private void createActions() {
-        refreshAction = new Action("Refresh", Plugin.getDefault().getImageDescriptor(Plugin.ICON_REFRESH)) {
+        refreshAction = new Action("Refresh", Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_REFRESH)) {
             public void run() {
                 Plugin.getDefault().update();
             }
