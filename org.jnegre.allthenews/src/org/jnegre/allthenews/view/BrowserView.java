@@ -16,9 +16,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
@@ -35,7 +40,7 @@ import org.jnegre.allthenews.RssListener;
 /**
  * @author Jérôme Nègre
  */
-public class BrowserView extends ViewPart implements RssListener, TitleListener, ProgressListener {
+public class BrowserView extends ViewPart implements RssListener, TitleListener, ProgressListener, StatusTextListener {
 
 	private static final String LINK_MEMENTO_KEY = "link"; //$NON-NLS-1$
 	private static final String SHOW_DESCRIPTION_MEMENTO_KEY = "showDescription"; //$NON-NLS-1$
@@ -45,6 +50,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	private final static String HTML_NO_DESCRIPTION = Messages.getString("BrowserView.NoDescription"); //$NON-NLS-1$
 
 	Browser browser;
+	Label statusLine;
 	private boolean uiReady = false;
 	private String title = null;
 	private int loadFraction = 100;
@@ -70,9 +76,20 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	}
 
 	public void createPartControl(Composite parent) {
+		GridLayout layout = new GridLayout(1,true);
+		parent.setLayout(layout);
 		browser = new Browser(parent, SWT.NONE);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		browser.setLayoutData(data);
+		statusLine = new Label(parent, SWT.NONE);
+		statusLine.setText("All The News - http://www.jnegre.org/allthenews/");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		statusLine.setLayoutData(data);
 		browser.addTitleListener(this);
 		browser.addProgressListener(this);
+		browser.addStatusTextListener(this);
 		uiReady = true;
 
         createActions();
@@ -236,4 +253,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 		return buffer.toString();
 	}
 
+	public void changed(StatusTextEvent event) {
+		statusLine.setText(event.text);
+	}
 }
