@@ -66,7 +66,7 @@ public class MainView extends ViewPart {
     }
 
     protected void createActions() {
-        refreshAction = new Action("Refresh", Plugin.getDefault().getImageDescriptor(Plugin.ICON_REFRESH)) {
+        refreshAction = new Action("Refresh", Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_REFRESH)) {
             public void run() {
                 Plugin.getDefault().update();
             }
