@@ -104,6 +104,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
                 (BrowserView.this).browser.back();
             }
         };
+        backAction.setToolTipText("Go Back");
     	
     	//forward
         forwardAction = new Action("Forward", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD)) {
@@ -111,6 +112,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
                 (BrowserView.this).browser.forward();
             }
         };
+        forwardAction.setToolTipText("Go Forward");
     	
     	//refresh
         refreshAction = new Action("Refresh", Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_REFRESH)) {
@@ -118,12 +120,14 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
                 (BrowserView.this).browser.refresh();
             }
         };
+        refreshAction.setToolTipText("Refresh");
         
         //link
         linkAction = new Action("Link", IAction.AS_CHECK_BOX) {
         };
         linkAction.setImageDescriptor(Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_LINK));
         linkAction.setChecked(linkActionInitState);
+        linkAction.setToolTipText("Link With Views");
     }
 
     private void createMenu() {
