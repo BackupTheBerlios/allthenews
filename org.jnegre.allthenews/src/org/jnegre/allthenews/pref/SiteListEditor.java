@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.jnegre.allthenews.pref;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.FieldEditor;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.search.SearchDialog;
 
@@ -39,6 +42,7 @@ public class SiteListEditor extends FieldEditor {
 	 * (before creation or after disposal).
 	 */
 	private List list;
+	private ArrayList channels;
 	/**
 	 * The button box containing the Add, Remove, Up, and Down buttons;
 	 * <code>null</code> if none (before creation or after disposal).
@@ -73,13 +77,16 @@ public class SiteListEditor extends FieldEditor {
 	 */
 	private void addPressed() {
 		setPresentsDefaultValue(false);
-		String input = getNewInputObject();
+		Channel input = getNewInputChannel();
 		if (input != null) {
 			int index = list.getSelectionIndex();
-			if (index >= 0)
-				list.add(input, index + 1);
-			else
-				list.add(input, 0);
+			if (index >= 0) {
+				list.add(input.getTitle(), index + 1);
+				channels.add(index + 1, input);
+			} else {
+				list.add(input.getTitle(), 0);
+				channels.add(0, input);
+			}
 			selectionChanged();
 		}
 	}
@@ -89,19 +96,21 @@ public class SiteListEditor extends FieldEditor {
 	 */
 	private void searchPressed() {
 		setPresentsDefaultValue(false);
-		//XXX
 		SearchDialog sd = new SearchDialog(SiteListEditor.this
 				.getShell());
 		sd.open();
-		String[] inputs = sd.getFeeds();
+		Channel[] inputs = sd.getChannels();
 		for(int i=0; i<inputs.length; i++) {
 			int index = list.getSelectionIndex();
-			if (index >= 0)
-				list.add(inputs[i], index + 1);
-			else
-				list.add(inputs[i], 0);
-			selectionChanged();
+			if (index >= 0) {
+				list.add(inputs[i].getTitle(), index + 1);
+				channels.add(index + 1, inputs[i]);
+			} else {
+				list.add(inputs[i].getTitle(), 0);
+				channels.add(0, inputs[i]);
+			}
 		}
+		selectionChanged();
 	}
 
 	
@@ -193,6 +202,7 @@ public class SiteListEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doLoad() {
+		/*
 		if (list != null) {
 			String s = getPreferenceStore().getString(getPreferenceName());
 			String[] array = parseString(s);
@@ -200,11 +210,19 @@ public class SiteListEditor extends FieldEditor {
 				list.add(array[i]);
 			}
 		}
+		*/
+		if (list != null) {
+			channels = ChannelStore.getChannels();
+			for (int i = 0; i < channels.size(); i++) {
+				list.add(((Channel)channels.get(i)).getTitle());
+			}
+		}
 	}
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
 	protected void doLoadDefault() {
+		/*
 		if (list != null) {
 			list.removeAll();
 			String s = getPreferenceStore().getDefaultString(
@@ -216,14 +234,20 @@ public class SiteListEditor extends FieldEditor {
 		}
 		//XXX
 		Plugin.getDefault().updateChannelList();
+		*/
 	}
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
 	protected void doStore() {
+		/*
 		String s = createList(list.getItems());
 		if (s != null)
 			getPreferenceStore().setValue(getPreferenceName(), s);
+		//XXX
+		Plugin.getDefault().updateChannelList();
+		*/
+		ChannelStore.setChannels(channels);
 		//XXX
 		Plugin.getDefault().updateChannelList();
 	}
@@ -324,6 +348,7 @@ public class SiteListEditor extends FieldEditor {
 		int index = list.getSelectionIndex();
 		if (index >= 0) {
 			list.remove(index);
+			channels.remove(index);
 			selectionChanged();
 		}
 	}
@@ -356,11 +381,15 @@ public class SiteListEditor extends FieldEditor {
 		int index = list.getSelectionIndex();
 		int target = up ? index - 1 : index + 1;
 		if (index >= 0) {
+			//list widget
 			String[] selection = list.getSelection();
 			Assert.isTrue(selection.length == 1);
 			list.remove(index);
 			list.add(selection[0], target);
 			list.setSelection(target);
+			//channels arrayList
+			Object obj = channels.remove(index);
+			channels.add(target, obj);
 		}
 		selectionChanged();
 	}
@@ -410,47 +439,24 @@ public class SiteListEditor extends FieldEditor {
 		createControl(parent);
 	}
 	/**
-	 * Splits the given string into a list of strings.
-	 * This method is the converse of <code>createList</code>. 
-	 *
-	 * @param stringList the string
-	 * @return an array of <code>String</code>
-	 * @see #createList
-	 */
-	protected String[] parseString(String stringList) {
-		return ListEncoder.decode(stringList);
-	}
-	/**
 	 * Creates and returns a new item for the list.
 	 *
 	 * @return a new item
 	 */
-	protected String getNewInputObject() {
+	protected Channel getNewInputChannel() {
 		InputDialog dialog;
-		String result;
 		dialog = new InputDialog(this.getShell(), "All The News",
 				"Enter new site name", "", null);
 		dialog.open();
 		if ("".equals(dialog.getValue()) || dialog.getValue() == null)
 			return null;
-		result = dialog.getValue();
+		String title = dialog.getValue();
 		dialog = new InputDialog(this.getShell(), "All The News",
 				"Enter new site URL", "", null);
 		dialog.open();
 		if ("".equals(dialog.getValue()) || dialog.getValue() == null)
 			return null;
-		result += " \u00B6 " + dialog.getValue();
-		return result;
-	}
-	/**
-	 * Combines the given list of items into a single string.
-	 * This method is the converse of <code>parseString</code>. 
-	 *
-	 * @param items the list of items
-	 * @return the combined string
-	 * @see #parseString
-	 */
-	protected String createList(String[] items) {
-		return ListEncoder.encode(items);
+		String url = dialog.getValue();
+		return new Channel(title, url);
 	}
 }

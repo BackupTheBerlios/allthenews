@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.jnegre.allthenews.Channel;
 
 /**
  * @author Jérôme Nègre
@@ -45,7 +46,7 @@ public class SearchDialog extends Dialog {
     private Text version;
     private Text description;
     
-    private ArrayList resultFeeds = new ArrayList();
+    private ArrayList resultChannels = new ArrayList();
     
     private XmlRpcClient xmlRpcClient;
     
@@ -198,7 +199,8 @@ public class SearchDialog extends Dialog {
     
     protected void addFeedInList(Hashtable info) {
         String name = (String)info.get("sitename");
-        if("".equals(name)) {
+        String dataurl = (String)info.get("dataurl");
+        if("".equals(name) || "".equals(dataurl)) {
             //skip it
             return;
         }
@@ -224,12 +226,12 @@ public class SearchDialog extends Dialog {
 			String name = this.name.getText();
 			String url = this.feedUrl.getText();
 			if(!"".equals(name) && !"".equals(url)) {
-				resultFeeds.add(name+" \u00B6 "+url);
+				resultChannels.add(new Channel(name, url));
 			}
 		}
 	}
 	
-	public String[] getFeeds() {
-		return (String[])resultFeeds.toArray(new String[]{});
+	public Channel[] getChannels() {
+		return (Channel[])resultChannels.toArray(new Channel[]{});
 	}
 }

@@ -132,8 +132,6 @@ public class Item {
         if(readFlag != this.readFlag) {
             this.readFlag = readFlag;
             channel.computeUnRead();
-            //FIXME use the new notification system
-            //Plugin.getDefault().refreshChannelIconInViews(channel);
         }
     }
 
@@ -142,8 +140,7 @@ public class Item {
      */
     public boolean equals(Object obj) {
         return (obj instanceof Item)
-                && ((Item)obj).getUsableLink().equals(this.getUsableLink())
-                && ((Item)obj).getUsableTitle().equals(this.getUsableTitle());
+                && ((Item)obj).getUID().equals(this.getUID());
     }
 
     protected static Date decodeDCDate(String string) throws Exception {
@@ -254,4 +251,13 @@ public class Item {
         return channel;
     }
 
+    /**
+     * Returns a unique ID used to remember which
+     * items were read in the ChannelStore
+     * @return
+     */
+    public String getUID() {
+    	return getUsableLink() + ") ~ (" + getUsableTitle();
+    }
+    
 }

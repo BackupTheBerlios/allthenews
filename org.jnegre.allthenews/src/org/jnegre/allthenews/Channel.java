@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,21 +23,27 @@ import org.xml.sax.InputSource;
  */
 public class Channel {
 
-    protected String url;
-    protected String title;
+    private final String url;
+    private final String title;
 
-    protected boolean refreshing = false;
-    protected String errorMessage = null;
-    protected boolean unread = false;
+    private boolean refreshing = false;
+    private String errorMessage = null;
+    private boolean unread = false;
     
-    protected ArrayList items = new ArrayList();
+    private ArrayList items = new ArrayList();
+    private HashSet readUids = null;
 
     /**
      * Constructor for Channel.
      */
     public Channel(String title, String url) {
+    	this(title, url, null);
+    }
+
+    public Channel(String title, String url, HashSet readUids) {
         this.title = title;
         this.url = url;
+        this.readUids = readUids;
     }
 
 
@@ -57,16 +64,16 @@ public class Channel {
         		conn.setRequestProperty("Cache-Control", "no-cache");
             }
             InputStream stream = conn.getInputStream();
-            //DOMParser parser = new DOMParser();
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            //FIXME put this back if it's still needed
-            //parser.setFeature("http://apache.org/xml/features/allow-java-encodings",true);
             Document doc = parser.parse(new InputSource(stream));
             stream.close();
             NodeList itemNodes = doc.getElementsByTagName("item");
             for (int i = 0; i < itemNodes.getLength(); i++) {
                 Item aNewItem = new Item(this, (Element) itemNodes.item(i));
                 if(aNewItem.isBanned()) continue;
+                if(readUids!=null && readUids.remove(aNewItem.getUID())) {
+                	aNewItem.setReadFlag(true);
+                }
                 int indexOld = items.indexOf(aNewItem);
                 if(indexOld != -1) {
                     newItems.add(items.get(indexOld));
@@ -75,6 +82,7 @@ public class Channel {
                 }
                 
             }
+            this.readUids = null;
         } catch(Exception e) {
             newErrorMessage = e.toString();
             Plugin.logInfo("Error in channel update",e);
@@ -158,5 +166,13 @@ public class Channel {
             this.unread = this.unread || !((Item)items.get(i)).isReadFlag();
         }
     }
+    
+    public String getUID() {
+    	return computeUID(url);
+    }
 
+    public static String computeUID(String anUrl) {
+    	return "CHA" + anUrl;
+    }
+    
 }

@@ -1,40 +1,34 @@
 package org.jnegre.allthenews;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.jnegre.allthenews.pref.ChannelStore;
 import org.jnegre.allthenews.pref.ListEncoder;
 
 public class Plugin extends AbstractUIPlugin {
 
 	public static final String BACKENDS_SECTION = "backends";
 	
-    public static final String VERSION_PREFERENCE = "org.jnegre.allthenews.version";
 	public static final String REFRESH_INTERVAL_PREFERENCE = "org.jnegre.allthenews.refreshinterval";
+	/** @deprecated */
 	public static final String BACKENDS_PREFERENCE = "org.jnegre.allthenews.backends";
 	public static final String BROWSER_PREFERENCE = "org.jnegre.allthenews.browser";
-    public static final String BROWSER_TYPE_PREFERENCE = "org.jnegre.allthenews.browser.type";
     public static final String BANNED_ITEMS_PREFERENCE = "org.jnegre.allthenews.banneditems";
     public static final String FORCE_CACHE_PREFERENCE = "org.jnegre.allthenews.forcecache";
 
 	//Default values
-    public static final int CURRENT_VERSION = 1;
 	public static final int DEFAULT_REFRESH_INTERVAL = 60;
-	public static final String DEFAULT_BACKENDS = ListEncoder.encode(new String[] {
-        "LinuxFR \u00B6 http://linuxfr.org/backend.rss",
-        "Slashdot \u00B6 http://slashdots.org/slashdot.rdf"});
 	public static final String DEFAULT_BROWSER = "C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE";
-    public static final String DEFAULT_BROWSER_TYPE = "2";
     public static final String DEFAULT_BANNED_ITEMS = "";
 	public static final boolean DEFAULT_FORCE_CACHE = false;
 
@@ -62,6 +56,7 @@ public class Plugin extends AbstractUIPlugin {
     public Plugin(IPluginDescriptor descriptor) {
         super(descriptor);
 
+        //set the user-agent ID
         StringBuffer buffer = new StringBuffer();
         buffer.append("AllTheNews/")
               .append(descriptor.getVersionIdentifier())
@@ -72,21 +67,8 @@ public class Plugin extends AbstractUIPlugin {
               .append("; http://www.jnegre.org/)");
         userAgent =  buffer.toString();
         
-        //convert backends using the old system to the new one if needed
-        if(this.getPreferenceStore().getInt(VERSION_PREFERENCE) == 0
-            && !DEFAULT_BACKENDS.equals(this.getPreferenceStore().getString(BACKENDS_PREFERENCE))) {
-            String back = this.getPreferenceStore().getString(BACKENDS_PREFERENCE);
-            if(!"".equals(back)) {
-                StringTokenizer tokenizer = new StringTokenizer(back," ");
-                int countTokens = tokenizer.countTokens();
-                String[] result = new String[countTokens];
-                for(int i=0;i<countTokens;i++) {
-                    result[i] = URLDecoder.decode(tokenizer.nextToken());
-                }
-                this.getPreferenceStore().setValue(BACKENDS_PREFERENCE,ListEncoder.encode(result));
-            }
-        }
-        this.getPreferenceStore().setValue(VERSION_PREFERENCE,CURRENT_VERSION);
+        //init the channel store
+        ChannelStore.init(this);
         
         updateBanList();
         updateChannelList();
@@ -113,9 +95,7 @@ public class Plugin extends AbstractUIPlugin {
      */
     protected void initializeDefaultPreferences(IPreferenceStore store) {
         store.setDefault(REFRESH_INTERVAL_PREFERENCE,DEFAULT_REFRESH_INTERVAL);
-        store.setDefault(BACKENDS_PREFERENCE,DEFAULT_BACKENDS);
         store.setDefault(BROWSER_PREFERENCE,DEFAULT_BROWSER);
-        store.setDefault(BROWSER_TYPE_PREFERENCE,DEFAULT_BROWSER_TYPE);
         store.setDefault(BANNED_ITEMS_PREFERENCE,DEFAULT_BANNED_ITEMS);
         store.setDefault(FORCE_CACHE_PREFERENCE,DEFAULT_FORCE_CACHE);
     }
@@ -220,17 +200,7 @@ public class Plugin extends AbstractUIPlugin {
     
     public void updateChannelList() {
         synchronized(channelLock) {
-            channelList = new ArrayList();
-            //old system
-            String backends = this.getPreferenceStore().getString(Plugin.BACKENDS_PREFERENCE);
-            String[] entries = ListEncoder.decode(backends);
-            for (int i = 0; i < entries.length; i++) {
-                int index = entries[i].indexOf('\u00B6');
-                String title = entries[i].substring(0, index - 1);
-                String url = entries[i].substring(index + 2);
-                Channel channel = new Channel(title, url);
-                channelList.add(channel);
-            }
+            channelList = ChannelStore.getChannels();
         }
         notifyChannelListChanged(null);
     }
@@ -254,5 +224,9 @@ public class Plugin extends AbstractUIPlugin {
         }
     }
 
+	public void shutdown() throws CoreException {
+		ChannelStore.saveReadStatus(getChannelList());
+		super.shutdown();
+	}
 }
 
