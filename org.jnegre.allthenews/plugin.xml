@@ -8,6 +8,7 @@
 
    <runtime>
       <library name="allthenews.jar"/>
+      <library name="lib/xmlrpc-1.2-b1.jar"/>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.boot"/>
