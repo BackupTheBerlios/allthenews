@@ -2,8 +2,8 @@
 <feature
       id="org.jnegre.feature.allthenews"
       label="All The News"
-      version="3.0.0"
-      provider-name="Jérôme Nègre">
+      version="3.0.1"
+      provider-name="Jerome Negre">
 
    <license url="http://www.jnegre.org/cpl1_0.html">
       Common Public License v1.0
@@ -30,8 +30,8 @@ See http://www.jnegre.org/cpl1_0.html
 
    <plugin
          id="org.jnegre.allthenews"
-         download-size="153000"
-         install-size="0"
-         version="3.0.0"/>
+         download-size="156000"
+         install-size="156000"
+         version="3.0.1"/>
 
 </feature>

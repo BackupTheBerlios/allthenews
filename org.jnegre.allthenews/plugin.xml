@@ -4,7 +4,7 @@
    id="org.jnegre.allthenews"
    name="All The News"
    version="3.0.1"
-   provider-name="JÃ©rÃ´me NÃ¨gre"
+   provider-name="Jerome Negre"
    class="org.jnegre.allthenews.Plugin">
 
    <runtime>

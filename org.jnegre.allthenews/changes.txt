@@ -1,5 +1,6 @@
 3.0.1
 	* Shows the progression of the download in the browser view
+	* Possibility to show the description of an item before following the link
 	* Fixed a bug detected by Leif Frenzel
 
 3.0.0
