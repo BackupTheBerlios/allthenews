@@ -1,5 +1,6 @@
 3.0.1
 	* Shows the progression of the download in the browser view
+	* Fixed a bug detected by Leif Frenzel
 
 3.0.0
 

@@ -53,6 +53,11 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 		Plugin.getDefault().addRssListener(this);
 	}
 
+	public void dispose() {
+		Plugin.getDefault().removeRssListener(this);
+		super.dispose();
+	}
+
 	public void createPartControl(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
 		browser.addTitleListener(this);
