@@ -66,13 +66,14 @@ public class Plugin extends AbstractUIPlugin {
               .append(System.getProperty("os.arch"))
               .append("; http://www.jnegre.org/)");
         userAgent =  buffer.toString();
-        
+
+        singleton = this;
+
         //init the channel store
         ChannelStore.init(this);
         
         updateBanList();
         updateChannelList();
-        singleton = this;
         setTimer();
     }
 

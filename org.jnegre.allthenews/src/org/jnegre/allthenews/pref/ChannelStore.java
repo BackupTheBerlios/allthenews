@@ -4,9 +4,12 @@
  */
 package org.jnegre.allthenews.pref;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.jnegre.allthenews.Channel;
@@ -17,6 +20,8 @@ import org.jnegre.allthenews.Plugin;
  * @author Jérôme Nègre
  */
 public class ChannelStore {
+	
+	private final static String DEFAULT_CHANNELS_FILE = "default_feeds.properties";
 	
 	private final static String BACKENDS_SECTION = "backends";
 	
@@ -63,7 +68,7 @@ public class ChannelStore {
 		int newSize = channels.size();
 		for(int i=0; i<newSize; i++) {
 			Channel channel = (Channel)channels.get(i); 
-			addChannel(section,channel.getTitle(),channel.getUrl());
+			addChannel(section,channel);
 		}
 	}
 	
@@ -85,6 +90,25 @@ public class ChannelStore {
 		}
 	}
 	
+	public static synchronized ArrayList getDefaultChannels() {
+		ArrayList result = new ArrayList();
+		try {
+			Properties prop = new Properties();
+			URL propLocation = new URL(Plugin.getDefault().getDescriptor().getInstallURL(), DEFAULT_CHANNELS_FILE);
+			prop.load(propLocation.openStream());
+			Enumeration e = prop.propertyNames();
+			while(e.hasMoreElements()) {
+				String url = (String)e.nextElement();
+				String title = prop.getProperty(url);
+				result.add(new Channel(title, url));
+			}
+		} catch(Exception e) {
+			Plugin.logError("Error while getting default feed list", e);
+		}
+		return result;
+		
+	}
+	
 	/**
 	 * Returns a non null Channels Section,
 	 * creating it if needed.
@@ -101,15 +125,17 @@ public class ChannelStore {
 	private static IDialogSettings createDefaultChannelsSection() {
 		IDialogSettings section = plugin.getDialogSettings().addNewSection(BACKENDS_SECTION);
 		section.put(CHANNELS_ORDER_KEY,new String[0]);
-		//TODO add some default channels from config file
-		addChannel(section,"NEW LinuxFR","http://linuxfr.org/backend.rss");
-		addChannel(section,"NEW Java.net","http://today.java.net/pub/q/java_today_rss?x-ver=1.0");
-		addChannel(section,"NEW BBC Euro 2004","http://news.bbc.co.uk/rss/sportonline_uk_edition/football/euro_2004/rss091.xml");
-		
+		//add some default channels from config file
+		Iterator iterator = getDefaultChannels().iterator();
+		while(iterator.hasNext()) {
+			addChannel(section, (Channel)iterator.next());
+		}
 		return section;
 	}
 	
-	private static void addChannel(IDialogSettings backendSection, String title, String url) {
+	private static void addChannel(IDialogSettings backendSection, Channel channel) {
+		String title = channel.getTitle();
+		String url = channel.getUrl();
 		//FIXME check that section does not already exist before
 		//creating it, and if it exists, add it to the order key
 		//only if it's not already in it.
