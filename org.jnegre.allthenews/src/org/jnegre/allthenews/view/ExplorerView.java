@@ -88,10 +88,14 @@ public class ExplorerView extends ViewPart implements RssListener {
 	public void onItemSelected(Item tiem) {
 		// TODO Auto-generated method stub
 	}
-	/* (non-Javadoc)
-	 * @see org.jnegre.allthenews.RssListener#onItemStatusChanged(org.jnegre.allthenews.Item)
-	 */
-	public void onItemStatusChanged(Item tiem) {
-		// TODO Auto-generated method stub
+
+	public void onItemStatusChanged(final Item item) {
+		if(uiReady) {
+			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					treeViewer.refresh(item);
+				}
+			});
+		}
 	}
 }

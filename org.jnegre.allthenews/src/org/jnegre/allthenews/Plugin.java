@@ -210,6 +210,13 @@ public class Plugin extends AbstractUIPlugin {
 		}
 	}
 
+	public void notifyItemStatusChanged(Item item) {
+		Iterator iterator = rssListeners.iterator();
+		while(iterator.hasNext()) {
+			((RssListener)iterator.next()).onItemStatusChanged(item);
+		}
+	}
+
     public void setTimer() {
         if(timer != null) {
             timer.cancel();

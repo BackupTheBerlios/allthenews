@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.TitleEvent;
+import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
@@ -18,7 +20,7 @@ import org.jnegre.allthenews.RssListener;
 /**
  * @author Jérôme Nègre
  */
-public class BrowserView extends ViewPart implements RssListener {
+public class BrowserView extends ViewPart implements RssListener, TitleListener {
 
 	Browser browser;
 	private boolean uiReady = false;
@@ -30,6 +32,7 @@ public class BrowserView extends ViewPart implements RssListener {
 
 	public void createPartControl(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
+		browser.addTitleListener(this);
 		uiReady = true;
 	}
 
@@ -64,6 +67,12 @@ public class BrowserView extends ViewPart implements RssListener {
 	public void onItemSelected(Item item) {
 		if(item != null && uiReady) {
 			browser.setUrl(item.getUsableLink());
+			item.setReadFlag(true);
+			Plugin.getDefault().notifyItemStatusChanged(item);
 		}
+	}
+
+	public void changed(TitleEvent event) {
+		this.setTitle(event.title);
 	}
 }
