@@ -18,14 +18,18 @@ public class UpdateThread extends Thread {
      */
     public void run() {
         try {
+        	Plugin plugin = Plugin.getDefault();
             Iterator iterator = Plugin.getDefault().getChannelList().iterator();
             while(iterator.hasNext()) {
+            	//FIXME remove old notification system
                 Channel channel = (Channel)iterator.next();
                 channel.setRefreshing(true);
-                Plugin.getDefault().refreshChannelContentInViews(channel);
+                plugin.refreshChannelContentInViews(channel);
+                plugin.notifyChannelStatusChanged(channel);
                 channel.update();
                 channel.setRefreshing(false);
-                Plugin.getDefault().refreshChannelContentInViews(channel);
+                plugin.refreshChannelContentInViews(channel);
+                plugin.notifyChannelStatusChanged(channel);
             }
         } finally {
             Plugin.getDefault().updateThread = null;

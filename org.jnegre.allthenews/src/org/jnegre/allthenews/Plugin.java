@@ -44,6 +44,10 @@ public class Plugin extends AbstractUIPlugin {
 	public static final String ICON_OK = "ok.gif";
 	public static final String ICON_REFRESH = "refresh.gif";
     public static final String ICON_UNREAD = "unread.gif";
+    
+    public static final String ICON_LED_DARK_GREEN = "dark_green_led.png";
+    public static final String ICON_LED_LIGHT_GREEN = "light_green_led.png";
+    public static final String ICON_LED_RED = "red_led.png";
 
     //User-Agent
     public static String userAgent;
@@ -57,6 +61,11 @@ public class Plugin extends AbstractUIPlugin {
     protected Object channelLock = new Object();
     
     protected ArrayList banList = new ArrayList();
+    
+    /**
+     * List of RssListeners to notify
+     */
+    private ArrayList rssListeners = new ArrayList();
 
     /**
      * Constructor for Plugin
@@ -135,10 +144,15 @@ public class Plugin extends AbstractUIPlugin {
 
 	protected ImageRegistry createImageRegistry() {
 		ImageRegistry registry = super.createImageRegistry();
+		//old icons
 		registry.put(ICON_ALERT,getImageDescriptor(ICON_ALERT));
 		registry.put(ICON_OK,getImageDescriptor(ICON_OK));
 		registry.put(ICON_REFRESH,getImageDescriptor(ICON_REFRESH));
         registry.put(ICON_UNREAD,getImageDescriptor(ICON_UNREAD));
+        //new 3.0 icons
+        registry.put(ICON_LED_DARK_GREEN,getImageDescriptor(ICON_LED_DARK_GREEN));
+        registry.put(ICON_LED_LIGHT_GREEN,getImageDescriptor(ICON_LED_LIGHT_GREEN));
+        registry.put(ICON_LED_RED,getImageDescriptor(ICON_LED_RED));
 		return registry;
 	}
 
@@ -151,6 +165,41 @@ public class Plugin extends AbstractUIPlugin {
 	public void removeView(MainView view) {
 		synchronized(views) {
 			views.remove(view);
+		}
+	}
+
+	public void addRssListener(RssListener listener) {
+		synchronized(rssListeners) {
+			rssListeners.add(listener);
+		}
+	}
+
+	public void removeRssListener(RssListener listener) {
+		synchronized(rssListeners) {
+			rssListeners.remove(listener);
+		}
+	}
+
+	public void notifyChannelListChanged() {
+		Iterator iterator = rssListeners.iterator();
+		ArrayList channels = getChannelList();
+		while(iterator.hasNext()) {
+			((RssListener)iterator.next()).onChannelListChanged(channels);
+		}
+	}
+
+	public void notifyChannelStatusChanged(Channel channel) {
+		Iterator iterator = rssListeners.iterator();
+		while(iterator.hasNext()) {
+			((RssListener)iterator.next()).onChannelStatusChanged(channel);
+		}
+	}
+
+	//FIXME should have the source as parameter to avoid circular notification
+	public void notifyChannelSelected(Channel channel) {
+		Iterator iterator = rssListeners.iterator();
+		while(iterator.hasNext()) {
+			((RssListener)iterator.next()).onChannelSelected(channel);
 		}
 	}
 
@@ -197,6 +246,8 @@ public class Plugin extends AbstractUIPlugin {
                 channelList.add(channel);
             }
         }
+        notifyChannelListChanged();
+        //todo remove this block
         synchronized(views) {
             Iterator iterator = views.iterator();
             while(iterator.hasNext()) {

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.jnegre.allthenews"
    name="All The News"
-   version="2.0.2"
+   version="3.0.0"
    provider-name="Jérôme Nègre"
    class="org.jnegre.allthenews.Plugin">
 
@@ -11,6 +12,12 @@
       <library name="lib/xmlrpc-1.2-b1.jar"/>
    </runtime>
    <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.core.boot"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.swt"/>
@@ -22,15 +29,29 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Utilities"
-            id="org.jnegre.utilities">
+            name="All The News"
+            id="org.jnegre.allthenews.viewcategory">
       </category>
       <view
             name="All The News"
             icon="icons\news.gif"
-            category="org.jnegre.utilities"
+            category="org.jnegre.allthenews.viewcategory"
             class="org.jnegre.allthenews.view.MainView"
             id="org.jnegre.allthenews.view">
+      </view>
+      <view
+            name="News Explorer"
+            icon="icons\red_led.png"
+            category="org.jnegre.allthenews.viewcategory"
+            class="org.jnegre.allthenews.view.ExplorerView"
+            id="org.jnegre.allthenews.view.explorer">
+      </view>
+      <view
+            name="Headlines"
+            icon="icons\dark_green_led.png"
+            category="org.jnegre.allthenews.viewcategory"
+            class="org.jnegre.allthenews.view.HeadlineView"
+            id="org.jnegre.allthenews.view.headline">
       </view>
    </extension>
    <extension
