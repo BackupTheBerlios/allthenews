@@ -226,6 +226,7 @@ public class SiteListEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doStore() {
+		ChannelStore.saveReadStatus(Plugin.getDefault().getChannelList());
 		ChannelStore.setChannels(channels);
 		Plugin.getDefault().updateChannelList();
 	}
