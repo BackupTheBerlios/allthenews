@@ -4,10 +4,13 @@
  */
 package org.jnegre.allthenews.view;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -25,6 +28,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
+import org.jnegre.allthenews.Messages;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
 
@@ -33,8 +37,12 @@ import org.jnegre.allthenews.RssListener;
  */
 public class BrowserView extends ViewPart implements RssListener, TitleListener, ProgressListener {
 
-	private static final String LINK_MEMENTO_KEY = "link";
-	
+	private static final String LINK_MEMENTO_KEY = "link"; //$NON-NLS-1$
+
+	//0 = description; 1=description with BR; 2=url; 3=title
+	private final static String HTML = Messages.getString("BrowserView.DescriptionTemplate"); //$NON-NLS-1$
+	private final static String HTML_NO_DESCRIPTION = Messages.getString("BrowserView.NoDescription"); //$NON-NLS-1$
+
 	Browser browser;
 	private boolean uiReady = false;
 	private String title = null;
@@ -43,8 +51,9 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
     private Action backAction;
     private Action forwardAction;
     private Action refreshAction;
-    private Action linkAction;
     private Action clearAction;
+    private Action linkAction;
+    private Action showDescritionAction;
 
     private boolean linkActionInitState = true;
 	
@@ -90,7 +99,14 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 
 	public void onItemSelected(Item item) {
 		if(item != null && uiReady && linkAction.isChecked()) {
-			browser.setUrl(item.getUsableLink());
+			if(showDescritionAction.isChecked()) {
+				String desc = item.getDescription();
+				if(desc == null)
+					desc = HTML_NO_DESCRIPTION;
+				browser.setText(MessageFormat.format(HTML,new String[]{desc, encodeNewLine(desc), item.getUsableLink(), item.getUsableTitle()}));
+			} else {
+				browser.setUrl(item.getUsableLink());
+			}
 			//XXX this is a hack, should be done otherwise
 			boolean channelStatus = item.getChannel().isUnread();
 			item.setReadFlag(true);
@@ -110,49 +126,54 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	
     private void createActions() {
     	//back
-        backAction = new Action("Back", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK)) {
+        backAction = new Action("Back", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK)) { //$NON-NLS-1$
             public void run() {
                 (BrowserView.this).browser.back();
             }
         };
-        backAction.setToolTipText("Go Back");
+        backAction.setToolTipText("Go Back"); //$NON-NLS-1$
     	
     	//forward
-        forwardAction = new Action("Forward", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD)) {
+        forwardAction = new Action("Forward", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD)) { //$NON-NLS-1$
             public void run() {
                 (BrowserView.this).browser.forward();
             }
         };
-        forwardAction.setToolTipText("Go Forward");
+        forwardAction.setToolTipText("Go Forward"); //$NON-NLS-1$
     	
     	//refresh
-        refreshAction = new Action("Refresh", IconManager.getImageDescriptor(IconManager.ICON_ACTION_REFRESH)) {
+        refreshAction = new Action("Refresh", IconManager.getImageDescriptor(IconManager.ICON_ACTION_REFRESH)) { //$NON-NLS-1$
             public void run() {
                 (BrowserView.this).browser.refresh();
             }
         };
-        refreshAction.setToolTipText("Refresh");
+        refreshAction.setToolTipText("Refresh"); //$NON-NLS-1$
         
+        //clear
+        clearAction = new Action("Clear", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE)) { //$NON-NLS-1$
+            public void run() {
+                (BrowserView.this).browser.setUrl("about:blank"); //$NON-NLS-1$
+            }
+        };
+        clearAction.setToolTipText("Clear"); //$NON-NLS-1$
+
         //link
-        linkAction = new Action("Link", IAction.AS_CHECK_BOX) {
+        linkAction = new Action("Link", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
         };
         linkAction.setImageDescriptor(IconManager.getImageDescriptor(IconManager.ICON_ACTION_LINK));
         linkAction.setChecked(linkActionInitState);
-        linkAction.setToolTipText("Link With Views");
+        linkAction.setToolTipText("Link With Views"); //$NON-NLS-1$
 
-        //clear
-        clearAction = new Action("Clear", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE)) {
-            public void run() {
-                (BrowserView.this).browser.setUrl("about:blank");
-            }
+        //link
+        showDescritionAction = new Action("Show Local Description First", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
         };
-        clearAction.setToolTipText("Clear");
-
+        //FIXME showDescritionAction.setImageDescriptor(IconManager.getImageDescriptor(IconManager.ICON_ACTION_LINK));
+        //FIXME showDescritionAction.setChecked(linkActionInitState);
     }
 
     private void createMenu() {
-        //IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
-        //mgr.add(clearAction);
+        IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
+        mgr.add(showDescritionAction);
     }
 
     private void createToolBar() {
@@ -188,11 +209,24 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 		if(loadFraction == 100) {
 			this.setContentDescription(this.title);
 		} else {
-			this.setContentDescription("Loading: "+this.loadFraction+"%");
+			this.setContentDescription("Loading: "+this.loadFraction+"%"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	public void completed(ProgressEvent event) {
 		this.setContentDescription(this.title);
 	}
+	
+	private String encodeNewLine(String text) {
+		StringTokenizer tokenizer = new StringTokenizer(text, "\n\r"); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer(text.length()*2);
+		while(tokenizer.hasMoreTokens()) {
+			buffer.append(tokenizer.nextToken());
+			if(tokenizer.hasMoreTokens()) {
+				buffer.append("<br/>"); //$NON-NLS-1$
+			}
+		}
+		return buffer.toString();
+	}
+
 }
