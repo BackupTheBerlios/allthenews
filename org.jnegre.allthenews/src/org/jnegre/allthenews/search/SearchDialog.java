@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -81,13 +82,16 @@ public class SearchDialog extends Dialog {
         searchButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 //TODO use a worker
-                //TODO change the cursor (wait...)
+            	Cursor waitCursor = new Cursor(SearchDialog.this.getContents().getDisplay(), SWT.CURSOR_WAIT);
                 try {
+                	SearchDialog.this.getContents().setCursor(waitCursor);
                     SearchDialog.this.searchNow();
                 } catch (Exception x) {
                     setStatusMessage("Error: "+x.getMessage());
+                } finally {
+                	SearchDialog.this.getContents().setCursor(null);
+                	waitCursor.dispose();
                 }
-                //TODO put the original cursor back
             }
         });
         //List for the titles of the feeds
