@@ -48,7 +48,7 @@ public class Item {
         
         String simpleDescription = readValue("description", itemElement, 0);
         String contentEncoded = readValue("content:encoded", itemElement, 0);
-        this.description = contentEncoded!=null?contentEncoded:description;
+        this.description = contentEncoded!=null?contentEncoded:simpleDescription;
         
         this.author = readValue("author", itemElement, 0);
         this.guid = readValue("guid", itemElement, 1);
