@@ -38,6 +38,7 @@ import org.jnegre.allthenews.RssListener;
 public class BrowserView extends ViewPart implements RssListener, TitleListener, ProgressListener {
 
 	private static final String LINK_MEMENTO_KEY = "link"; //$NON-NLS-1$
+	private static final String SHOW_DESCRIPTION_MEMENTO_KEY = "showDescription"; //$NON-NLS-1$
 
 	//0 = description; 1=description with BR; 2=url; 3=title
 	private final static String HTML = Messages.getString("BrowserView.DescriptionTemplate"); //$NON-NLS-1$
@@ -56,6 +57,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
     private Action showDescritionAction;
 
     private boolean linkActionInitState = true;
+    private boolean showDescriptionActionInitState = true;
 	
 	public BrowserView() {
 		super();
@@ -167,8 +169,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
         //link
         showDescritionAction = new Action("Show Local Description First", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
         };
-        //FIXME showDescritionAction.setImageDescriptor(IconManager.getImageDescriptor(IconManager.ICON_ACTION_LINK));
-        //FIXME showDescritionAction.setChecked(linkActionInitState);
+        showDescritionAction.setChecked(showDescriptionActionInitState);
     }
 
     private void createMenu() {
@@ -188,9 +189,14 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if(memento != null) {
-			Integer link = memento.getInteger(LINK_MEMENTO_KEY);
-			if(link != null && link.intValue() == 0) {
+			Integer status = memento.getInteger(LINK_MEMENTO_KEY);
+			if(status != null && status.intValue() == 0) {
 				linkActionInitState = false;
+			}
+			
+			status = memento.getInteger(SHOW_DESCRIPTION_MEMENTO_KEY);
+			if(status != null && status.intValue() == 0) {
+				showDescriptionActionInitState = false;
 			}
 		}
 	}
@@ -198,6 +204,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putInteger(LINK_MEMENTO_KEY,linkAction.isChecked()?1:0);
+		memento.putInteger(SHOW_DESCRIPTION_MEMENTO_KEY,showDescritionAction.isChecked()?1:0);
 	}
 
 	public void changed(ProgressEvent event) {
