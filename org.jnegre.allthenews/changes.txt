@@ -1,3 +1,7 @@
+3.0.4
+
+	* Support of <content:encoded> tags
+
 3.0.3
 
 	* Workaround a bug in Crimson (should fix encoding problems on some feeds)

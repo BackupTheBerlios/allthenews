@@ -45,7 +45,11 @@ public class Item {
         this.channel = channel;
         this.title = readValue("title", itemElement, 0);
         this.link = readValue("link", itemElement, 0);
-        this.description = readValue("description", itemElement, 0);
+        
+        String simpleDescription = readValue("description", itemElement, 0);
+        String contentEncoded = readValue("content:encoded", itemElement, 0);
+        this.description = contentEncoded!=null?contentEncoded:description;
+        
         this.author = readValue("author", itemElement, 0);
         this.guid = readValue("guid", itemElement, 1);
         String pubDate = readValue("pubDate", itemElement, 0);
