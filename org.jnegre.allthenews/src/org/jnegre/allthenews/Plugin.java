@@ -184,40 +184,54 @@ public class Plugin extends AbstractUIPlugin {
 		}
 	}
 
-	public void notifyChannelListChanged() {
+	public void notifyChannelListChanged(RssListener source) {
 		Iterator iterator = rssListeners.iterator();
 		ArrayList channels = getChannelList();
 		while(iterator.hasNext()) {
-			((RssListener)iterator.next()).onChannelListChanged(channels);
+			RssListener listener = (RssListener)iterator.next();
+			if(listener != source) {
+				listener.onChannelListChanged(channels);
+			}
 		}
 	}
 
-	public void notifyChannelStatusChanged(Channel channel) {
+	public void notifyChannelStatusChanged(Channel channel, RssListener source) {
 		Iterator iterator = rssListeners.iterator();
 		while(iterator.hasNext()) {
-			((RssListener)iterator.next()).onChannelStatusChanged(channel);
+			RssListener listener = (RssListener)iterator.next();
+			if(listener != source) {
+				listener.onChannelStatusChanged(channel);
+			}
 		}
 	}
 
-	//FIXME should have the source as parameter to avoid circular notification
-	public void notifyChannelSelected(Channel channel) {
+	public void notifyChannelSelected(Channel channel, RssListener source) {
 		Iterator iterator = rssListeners.iterator();
 		while(iterator.hasNext()) {
-			((RssListener)iterator.next()).onChannelSelected(channel);
+			RssListener listener = (RssListener)iterator.next();
+			if(listener != source) {
+				listener.onChannelSelected(channel);
+			}
 		}
 	}
 
-	public void notifyItemSelected(Item item) {
+	public void notifyItemSelected(Item item, RssListener source) {
 		Iterator iterator = rssListeners.iterator();
 		while(iterator.hasNext()) {
-			((RssListener)iterator.next()).onItemSelected(item);
+			RssListener listener = (RssListener)iterator.next();
+			if(listener != source) {
+				listener.onItemSelected(item);
+			}
 		}
 	}
 
-	public void notifyItemStatusChanged(Item item) {
+	public void notifyItemStatusChanged(Item item, RssListener source) {
 		Iterator iterator = rssListeners.iterator();
 		while(iterator.hasNext()) {
-			((RssListener)iterator.next()).onItemStatusChanged(item);
+			RssListener listener = (RssListener)iterator.next();
+			if(listener != source) {
+				listener.onItemStatusChanged(item);
+			}
 		}
 	}
 
@@ -264,7 +278,7 @@ public class Plugin extends AbstractUIPlugin {
                 channelList.add(channel);
             }
         }
-        notifyChannelListChanged();
+        notifyChannelListChanged(null);
         //todo remove this block
         synchronized(views) {
             Iterator iterator = views.iterator();

@@ -25,11 +25,11 @@ public class UpdateThread extends Thread {
                 Channel channel = (Channel)iterator.next();
                 channel.setRefreshing(true);
                 plugin.refreshChannelContentInViews(channel);
-                plugin.notifyChannelStatusChanged(channel);
+                plugin.notifyChannelStatusChanged(channel, null);
                 channel.update();
                 channel.setRefreshing(false);
                 plugin.refreshChannelContentInViews(channel);
-                plugin.notifyChannelStatusChanged(channel);
+                plugin.notifyChannelStatusChanged(channel, null);
             }
         } finally {
             Plugin.getDefault().updateThread = null;

@@ -83,7 +83,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 		if(item != null && uiReady && linkAction.isChecked()) {
 			browser.setUrl(item.getUsableLink());
 			item.setReadFlag(true);
-			Plugin.getDefault().notifyItemStatusChanged(item);
+			Plugin.getDefault().notifyItemStatusChanged(item, this);
 		}
 	}
 

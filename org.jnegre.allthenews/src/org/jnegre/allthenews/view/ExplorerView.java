@@ -49,9 +49,9 @@ public class ExplorerView extends ViewPart implements RssListener {
 				Object selected = ((StructuredSelection)event.getSelection()).getFirstElement();
 				if(selected != null) {
 					if(selected instanceof Channel) {
-						Plugin.getDefault().notifyChannelSelected((Channel)selected);
+						Plugin.getDefault().notifyChannelSelected((Channel)selected,ExplorerView.this);
 					} else if(selected instanceof Item) {
-						Plugin.getDefault().notifyItemSelected((Item)selected);
+						Plugin.getDefault().notifyItemSelected((Item)selected,ExplorerView.this);
 					}
 				}
 			}
