@@ -7,8 +7,9 @@
 package org.jnegre.allthenews.search;
 
 import java.net.MalformedURLException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.xmlrpc.XmlRpcClient;
@@ -61,6 +62,7 @@ public class SearchDialog extends Dialog {
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
+        //TODO add a status bar
         Composite composite = (Composite)super.createDialogArea(parent);
         GridLayout gl = (GridLayout)composite.getLayout();
         gl.numColumns = 4;
@@ -89,6 +91,12 @@ public class SearchDialog extends Dialog {
         list = new List(composite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.SINGLE);
         gd = new GridData(GridData.FILL_BOTH);
         list.setLayoutData(gd);
+        list.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                SearchDialog.this.showFieldDetails((Hashtable)((ArrayList)list.getData()).get(list.getSelectionIndex()));
+            }
+        });
+        
         //Description of the selected feed
         Group group = new Group(composite,0);
         group.setText("Selected Feed");
@@ -130,12 +138,14 @@ public class SearchDialog extends Dialog {
      * 
      */
     protected void searchNow() throws Exception {
+      clearFeedList();
       XmlRpcClient client = getXmlRpcClient();
       //Get the list of ids
       Vector args = new Vector();
       args.add(searchText.getText());
+      args.add("sitename");
+      //args.add(new Integer(30));
       Vector ids = (Vector)client.execute("syndic8.FindFeeds",args);
-      System.out.println("=> "+ids);
       //Get the descriptions of the feeds
       Vector fields = new Vector();
       fields.add("sitename");
@@ -147,13 +157,36 @@ public class SearchDialog extends Dialog {
       args.add(ids);
       args.add(fields);
       Vector infos = (Vector)client.execute("syndic8.GetFeedInfo",args);
-      Hashtable info = (Hashtable)infos.get(0);
-      name.setText((String)info.get("sitename"));
-      siteUrl.setText((String)info.get("siteurl"));
-      feedUrl.setText((String)info.get("dataurl"));
-      version.setText((String)info.get("rss_version"));
-      description.setText((String)info.get("description"));
-      
+      Iterator iterator = infos.iterator();
+      while(iterator.hasNext()) {
+          Hashtable info = (Hashtable)iterator.next();
+          addFeedInList(info);
+      }
+    }
+    
+    protected void clearFeedList() {
+        list.removeAll();
+        showFieldDetails(null);
+        list.setData(new ArrayList());
+    }
+    
+    protected void showFieldDetails(Hashtable info) {
+        name.setText(info==null?"":(String)info.get("sitename"));
+        siteUrl.setText(info==null?"":(String)info.get("siteurl"));
+        feedUrl.setText(info==null?"":(String)info.get("dataurl"));
+        version.setText(info==null?"":(String)info.get("rss_version"));
+        description.setText(info==null?"":(String)info.get("description"));
+    }
+    
+    protected void addFeedInList(Hashtable info) {
+        String name = (String)info.get("sitename");
+        if("".equals(name)) {
+            //skip it
+            return;
+        }
+        ArrayList al = (ArrayList)list.getData();
+        al.add(info);
+        list.add(name);
     }
 
 }
