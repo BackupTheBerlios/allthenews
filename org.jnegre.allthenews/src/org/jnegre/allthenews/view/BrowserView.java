@@ -14,6 +14,8 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.Item;
@@ -91,21 +93,21 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
 	
     private void createActions() {
     	//back
-        backAction = new Action("Back", Plugin.getDefault().getImageDescriptor(Plugin.ICON_BROWSER_BACK)) {
+        backAction = new Action("Back", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK)) {
             public void run() {
-                (BrowserView.this).browser.refresh();
+                (BrowserView.this).browser.back();
             }
         };
     	
     	//forward
-        forwardAction = new Action("Forward", Plugin.getDefault().getImageDescriptor(Plugin.ICON_BROWSER_FORWARD)) {
+        forwardAction = new Action("Forward", PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD)) {
             public void run() {
-                (BrowserView.this).browser.refresh();
+                (BrowserView.this).browser.forward();
             }
         };
     	
     	//refresh
-        refreshAction = new Action("Refresh", Plugin.getDefault().getImageDescriptor(Plugin.ICON_REFRESH)) {
+        refreshAction = new Action("Refresh", Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_REFRESH)) {
             public void run() {
                 (BrowserView.this).browser.refresh();
             }
@@ -114,7 +116,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener 
         //link
         linkAction = new Action("Link", IAction.AS_CHECK_BOX) {
         };
-        linkAction.setImageDescriptor(Plugin.getDefault().getImageDescriptor(Plugin.ICON_LINK));
+        linkAction.setImageDescriptor(Plugin.getDefault().getImageRegistry().getDescriptor(Plugin.ICON_LINK));
     }
 
     private void createMenu() {

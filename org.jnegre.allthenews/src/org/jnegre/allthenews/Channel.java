@@ -166,7 +166,7 @@ public class Channel {
         } else {
             iconId = Plugin.ICON_ALERT;
         }
-        return Plugin.getDefault().getImageDescriptor(iconId).createImage();
+        return Plugin.getDefault().getImageRegistry().getDescriptor(iconId).createImage();
     }
 
     /**

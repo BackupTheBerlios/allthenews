@@ -46,8 +46,6 @@ public class Plugin extends AbstractUIPlugin {
     public static final String ICON_UNREAD = "unread.gif";
 
     public static final String ICON_LINK = "link.gif";
-    public static final String ICON_BROWSER_BACK = "back.png";
-    public static final String ICON_BROWSER_FORWARD = "forward.png";
 
     public static final String ICON_LED_DARK_GREEN = "dark_green_led.png";
     public static final String ICON_LED_LIGHT_GREEN = "light_green_led.png";
@@ -123,7 +121,7 @@ public class Plugin extends AbstractUIPlugin {
         getDefault().getLog().log(new Status(IStatus.INFO,getDefault().getDescriptor().getUniqueIdentifier(),IStatus.OK,message,t));
     }
 
-    public ImageDescriptor getImageDescriptor(String relativePath) {
+    private ImageDescriptor getImageDescriptor(String relativePath) {
         String iconPath = "icons/";
         try {
             URL url = new URL(getDescriptor().getInstallURL(), iconPath + relativePath);
