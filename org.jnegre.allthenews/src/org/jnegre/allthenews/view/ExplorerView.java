@@ -7,6 +7,7 @@ package org.jnegre.allthenews.view;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -20,6 +21,7 @@ import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
+import org.jnegre.allthenews.dialogs.NewChannelDialog;
 
 /**
  * @author Jérôme Nègre
@@ -30,6 +32,7 @@ public class ExplorerView extends ViewPart implements RssListener {
 	private NewsTreeViewerProvider provider;
 
     private Action refreshAction;
+    private Action newChannelAction;
 
 	public ExplorerView() {
 		super();
@@ -106,11 +109,19 @@ public class ExplorerView extends ViewPart implements RssListener {
             }
         };
         refreshAction.setToolTipText("Refresh");
+
+    	//newChannel
+        newChannelAction = new Action("Add New Channel") {
+            public void run() {
+                NewChannelDialog ncd = new NewChannelDialog(ExplorerView.this.getViewSite().getShell());
+                ncd.open();
+            }
+        };
     }
 
     private void createMenu() {
-        //IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
-        //mgr.add(clearAction);
+        IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
+        mgr.add(newChannelAction);
     }
 
     private void createToolBar() {
