@@ -124,14 +124,16 @@ public class Item {
     }
 
     /**
-     * Sets the readFlag.
+     * Sets the readFlag and notifies the listeners
+     * that the status changed.
      * @param readFlag The readFlag to set
      */
     public void setReadFlag(boolean readFlag) {
         if(readFlag != this.readFlag) {
             this.readFlag = readFlag;
             channel.computeUnRead();
-            Plugin.getDefault().refreshChannelIconInViews(channel);
+            //FIXME use the new notification system
+            //Plugin.getDefault().refreshChannelIconInViews(channel);
         }
     }
 

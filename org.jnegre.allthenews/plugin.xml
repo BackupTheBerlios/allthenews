@@ -32,13 +32,6 @@
             id="org.jnegre.allthenews.viewcategory">
       </category>
       <view
-            name="All The News"
-            icon="icons\news.gif"
-            category="org.jnegre.allthenews.viewcategory"
-            class="org.jnegre.allthenews.view.MainView"
-            id="org.jnegre.allthenews.view">
-      </view>
-      <view
             name="News Explorer"
             icon="icons\red_led.png"
             category="org.jnegre.allthenews.viewcategory"

@@ -16,7 +16,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.jnegre.allthenews.pref.ListEncoder;
-import org.jnegre.allthenews.view.MainView;
 
 public class Plugin extends AbstractUIPlugin {
 
@@ -25,7 +24,6 @@ public class Plugin extends AbstractUIPlugin {
 	public static final String BACKENDS_PREFERENCE = "org.jnegre.allthenews.backends";
 	public static final String BROWSER_PREFERENCE = "org.jnegre.allthenews.browser";
     public static final String BROWSER_TYPE_PREFERENCE = "org.jnegre.allthenews.browser.type";
-    public static final String VIEW_TYPE_PREFERENCE = "org.jnegre.allthenews.viewtype";
     public static final String BANNED_ITEMS_PREFERENCE = "org.jnegre.allthenews.banneditems";
     public static final String FORCE_CACHE_PREFERENCE = "org.jnegre.allthenews.forcecache";
 
@@ -37,7 +35,6 @@ public class Plugin extends AbstractUIPlugin {
         "Slashdot \u00B6 http://slashdots.org/slashdot.rdf"});
 	public static final String DEFAULT_BROWSER = "C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE";
     public static final String DEFAULT_BROWSER_TYPE = "2";
-    public static final String DEFAULT_VIEW_TYPE = "1";
     public static final String DEFAULT_BANNED_ITEMS = "";
 	public static final boolean DEFAULT_FORCE_CACHE = false;
 
@@ -142,7 +139,6 @@ public class Plugin extends AbstractUIPlugin {
         store.setDefault(BACKENDS_PREFERENCE,DEFAULT_BACKENDS);
         store.setDefault(BROWSER_PREFERENCE,DEFAULT_BROWSER);
         store.setDefault(BROWSER_TYPE_PREFERENCE,DEFAULT_BROWSER_TYPE);
-        store.setDefault(VIEW_TYPE_PREFERENCE,DEFAULT_VIEW_TYPE);
         store.setDefault(BANNED_ITEMS_PREFERENCE,DEFAULT_BANNED_ITEMS);
         store.setDefault(FORCE_CACHE_PREFERENCE,DEFAULT_FORCE_CACHE);
     }
@@ -161,18 +157,6 @@ public class Plugin extends AbstractUIPlugin {
         registry.put(ICON_LED_LIGHT_GREEN,getImageDescriptor(ICON_LED_LIGHT_GREEN));
         registry.put(ICON_LED_RED,getImageDescriptor(ICON_LED_RED));
 		return registry;
-	}
-
-	public void addView(MainView view) {
-		synchronized(views) {
-			views.add(view);
-		}
-	}
-
-	public void removeView(MainView view) {
-		synchronized(views) {
-			views.remove(view);
-		}
 	}
 
 	public void addRssListener(RssListener listener) {
@@ -282,40 +266,11 @@ public class Plugin extends AbstractUIPlugin {
             }
         }
         notifyChannelListChanged(null);
-        //todo remove this block
-        synchronized(views) {
-            Iterator iterator = views.iterator();
-            while(iterator.hasNext()) {
-                MainView view = ((MainView)iterator.next());
-                view.fillChannelTable();
-            }
-        }
     }
 
     public ArrayList getChannelList() {
         synchronized(channelLock) {
             return new ArrayList(channelList);
-        }
-    }
-
-
-    public void refreshChannelContentInViews(Channel channel) {
-        synchronized(views) {
-            Iterator iterator = views.iterator();
-            while(iterator.hasNext()) {
-                MainView view = ((MainView)iterator.next());
-                view.getDisplay().asyncExec(new RefreshChannelContent(channel, view));
-            }
-        }
-    }
-
-    public void refreshChannelIconInViews(Channel channel) {
-        synchronized(views) {
-            Iterator iterator = views.iterator();
-            while(iterator.hasNext()) {
-                MainView view = ((MainView)iterator.next());
-                view.getDisplay().asyncExec(new RefreshChannelIcon(channel, view));
-            }
         }
     }
 
@@ -329,37 +284,6 @@ public class Plugin extends AbstractUIPlugin {
     protected class UpdateTimer extends TimerTask {
         public void run() {
             update();
-        }
-    }
-
-    
-    protected class RefreshChannelContent implements Runnable {
-        
-        Channel channel;
-        MainView view;
-        
-        RefreshChannelContent(Channel channel, MainView view) {
-            this.channel = channel;
-            this.view = view;
-        }
-        
-        public void run() {
-            view.refreshChannelContent(channel);
-        }
-    }
-
-    protected class RefreshChannelIcon implements Runnable {
-        
-        Channel channel;
-        MainView view;
-        
-        RefreshChannelIcon(Channel channel, MainView view) {
-            this.channel = channel;
-            this.view = view;
-        }
-        
-        public void run() {
-            view.refreshChannelIcon(channel);
         }
     }
 
