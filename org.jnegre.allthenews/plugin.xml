@@ -4,7 +4,7 @@
    id="org.jnegre.allthenews"
    name="All The News"
    version="3.0.0"
-   provider-name="Jérôme Nègre"
+   provider-name="JÃ©rÃ´me NÃ¨gre"
    class="org.jnegre.allthenews.Plugin">
 
    <runtime>
@@ -47,7 +47,7 @@
       </view>
       <view
             name="Headlines"
-            icon="icons\dark_green_led.png"
+            icon="icons\headlines.png"
             category="org.jnegre.allthenews.viewcategory"
             class="org.jnegre.allthenews.view.HeadlineView"
             id="org.jnegre.allthenews.view.headline">
