@@ -136,22 +136,37 @@ public class ChannelStore {
 	private static void addChannel(IDialogSettings backendSection, Channel channel) {
 		String title = channel.getTitle();
 		String url = channel.getUrl();
-		//FIXME check that section does not already exist before
+		String uid = channel.getUID();
+		//check that section does not already exist before
 		//creating it, and if it exists, add it to the order key
 		//only if it's not already in it.
-		IDialogSettings section = backendSection.getSection(title);
-		//create section
-		String uid = Channel.computeUID(url);
-		section = backendSection.addNewSection(uid);
+		IDialogSettings section = backendSection.getSection(uid);
+		boolean addInOrder = true;
+		if(section == null) {
+			//create section
+			section = backendSection.addNewSection(uid);
+		} else {
+			//check if the section is already in the order key
+			String[] orders = backendSection.getArray(CHANNELS_ORDER_KEY);
+			for(int i=0; i<orders.length; i++) {
+				if(orders[i].equals(uid)) {
+					addInOrder = false;
+					break;
+				}
+			}
+		}
+		//set data
 		section.put(TITLE_KEY, title);
 		section.put(URL_KEY, url);
 		section.put(TYPE_KEY, TYPE_CHANNEL);
-		//set order key
-		String[] oldOrder = backendSection.getArray(CHANNELS_ORDER_KEY);
-		String[] newOrder = new String[oldOrder.length+1];
-		System.arraycopy(oldOrder, 0, newOrder, 0, oldOrder.length);
-		newOrder[oldOrder.length] = uid;
-		backendSection.put(CHANNELS_ORDER_KEY,newOrder);
+		//set order key if needed
+		if(addInOrder) {
+			String[] oldOrder = backendSection.getArray(CHANNELS_ORDER_KEY);
+			String[] newOrder = new String[oldOrder.length+1];
+			System.arraycopy(oldOrder, 0, newOrder, 0, oldOrder.length);
+			newOrder[oldOrder.length] = uid;
+			backendSection.put(CHANNELS_ORDER_KEY,newOrder);
+		}
 	}
 	
 }
