@@ -104,7 +104,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	public void changed(TitleEvent event) {
 		this.title = event.title;
 		if(loadFraction == 100) {
-			this.setTitle(this.title);
+			this.setContentDescription(this.title);
 		}
 	}
 	
@@ -186,13 +186,13 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 			this.loadFraction = 100;
 		}
 		if(loadFraction == 100) {
-			this.setTitle(this.title);
+			this.setContentDescription(this.title);
 		} else {
-			this.setTitle("Loading: "+this.loadFraction+"%");
+			this.setContentDescription("Loading: "+this.loadFraction+"%");
 		}
 	}
 
 	public void completed(ProgressEvent event) {
-		this.setTitle(this.title);
+		this.setContentDescription(this.title);
 	}
 }
