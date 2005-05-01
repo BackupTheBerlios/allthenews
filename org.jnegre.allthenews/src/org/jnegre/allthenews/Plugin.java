@@ -37,7 +37,6 @@ public class Plugin extends AbstractUIPlugin {
 
     protected UpdateThread updateThread;
 
-	protected ArrayList views = new ArrayList();
     protected Timer timer;
 
     protected ArrayList channelList;
