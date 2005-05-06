@@ -66,7 +66,7 @@ public class ExplorerView extends ViewPart implements RssListener {
         createToolBar();
 
         Plugin.getDefault().addRssListener(this);
-		treeViewer.setInput(Plugin.getDefault());
+		treeViewer.setInput(Plugin.getDefault().getRootFolder());
 	}
 
 	public void setFocus() {

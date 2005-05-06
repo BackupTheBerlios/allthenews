@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.jnegre.allthenews.Channel;
+import org.jnegre.allthenews.Folder;
 import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
@@ -47,7 +48,7 @@ public class NewsTreeViewerProvider
 	}
 
 	public Object[] getElements(Object inputElement) {
-		return ((Plugin)inputElement).getChannelList().toArray();
+		return ((Folder)inputElement).getContent().toArray();
 	}
 
 	/* (non-Javadoc)
