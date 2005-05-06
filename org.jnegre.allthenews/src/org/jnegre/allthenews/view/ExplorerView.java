@@ -74,7 +74,7 @@ public class ExplorerView extends ViewPart implements RssListener {
 	}
 
 	public void onChannelListChanged(List channels) {
-		treeViewer.setInput(Plugin.getDefault());
+		treeViewer.setInput(Plugin.getDefault().getRootFolder());
 	}
 	
 	public void onChannelStatusChanged(final Channel channel) {
