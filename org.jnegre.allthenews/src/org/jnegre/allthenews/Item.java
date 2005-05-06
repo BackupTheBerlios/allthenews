@@ -1,5 +1,9 @@
 package org.jnegre.allthenews;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,9 +11,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,7 +22,9 @@ import org.w3c.dom.Text;
  * (c)Copyright 2002 Jérôme Nègre
  * 
  */
-public class Item {
+public class Item implements Serializable {
+
+	private static final long serialVersionUID = 1L; //must not change
 
     protected static DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
     protected static SimpleDateFormat pubDateParser = new SimpleDateFormat("EEE, d MMM yy hh:mm:ss z", new Locale("en","US"));
@@ -124,17 +127,6 @@ public class Item {
 
     public boolean isBanned() {
         return Plugin.getDefault().isBannedTitle(title);
-    }
-
-    public TableItem toTableItem(Table table) {
-        TableItem tableItem = new TableItem(table, SWT.NONE);
-        fillTableItem(tableItem);
-        return tableItem;
-    }
-
-    public void fillTableItem(TableItem tableItem) {
-        tableItem.setText(new String[] {date,readFlag?"":"*",getUsableTitle()});
-        tableItem.setData(this);
     }
 
     /**
@@ -273,5 +265,39 @@ public class Item {
     public String getUID() {
     	return getUsableLink() + ") ~ (" + getUsableTitle();
     }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.writeInt(1);//serialization version number
+    	
+    	out.writeObject(channel);
+    	out.writeObject(title);
+    	out.writeObject(link);
+    	out.writeObject(description);
+    	out.writeObject(author);
+    	out.writeObject(guid);
+    	out.writeBoolean(isPermaLink);
+    	out.writeObject(date);
+    	out.writeBoolean(readFlag);
+   }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+    	int serializationVersion = in.readInt();
+    	switch(serializationVersion) {
+    		case 1:
+    			channel = (Channel)in.readObject();
+    			title = (String)in.readObject();
+    			link = (String)in.readObject();
+    			description = (String)in.readObject();
+    			author = (String)in.readObject();
+    			guid = (String)in.readObject();
+    			isPermaLink = in.readBoolean();
+    			date = (String)in.readObject();
+    			readFlag = in.readBoolean();
+    			break;
+    		default:
+    			throw new IOException("Unsupported serialization version: "+serializationVersion);
+    	}
+    }
+    
     
 }

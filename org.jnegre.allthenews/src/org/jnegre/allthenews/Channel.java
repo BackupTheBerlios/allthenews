@@ -1,7 +1,11 @@
 package org.jnegre.allthenews;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PushbackInputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -22,10 +26,12 @@ import org.xml.sax.InputSource;
  * (c)Copyright 2002 Jérôme Nègre
  * 
  */
-public class Channel {
+public class Channel implements Serializable {
 
-    private final String url;
-    private final String title;
+	private static final long serialVersionUID = 1L; //must not change
+	
+    private String url;
+    private String title;
 
     private boolean refreshing = false;
     private String errorMessage = null;
@@ -188,4 +194,26 @@ public class Channel {
     	return "CHA" + url;
     }
 
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.writeInt(1);//serialization version number
+    	out.writeObject(items);
+    	out.writeObject(title);
+    	out.writeObject(url);
+    	out.writeBoolean(unread);
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+    	int serializationVersion = in.readInt();
+    	switch(serializationVersion) {
+    		case 1:
+    			items = (ArrayList)in.readObject();
+    			title = (String)in.readObject();
+    			url = (String)in.readObject();
+    			unread = in.readBoolean();
+    			break;
+    		default:
+    			throw new IOException("Unsupported serialization version: "+serializationVersion);
+    	}
+    }
 }

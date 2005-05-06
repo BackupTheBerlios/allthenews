@@ -4,7 +4,7 @@
  */
 package org.jnegre.allthenews.view;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -28,7 +28,7 @@ import org.jnegre.allthenews.dialogs.NewChannelDialog;
  */
 public class ExplorerView extends ViewPart implements RssListener {
 	
-	private TreeViewer treeViewer;
+	TreeViewer treeViewer;
 	private NewsTreeViewerProvider provider;
 
     private Action refreshAction;
@@ -73,7 +73,7 @@ public class ExplorerView extends ViewPart implements RssListener {
 		treeViewer.getControl().setFocus();
 	}
 
-	public void onChannelListChanged(ArrayList channels) {
+	public void onChannelListChanged(List channels) {
 		treeViewer.setInput(Plugin.getDefault());
 	}
 	

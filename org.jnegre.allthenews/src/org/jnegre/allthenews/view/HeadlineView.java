@@ -4,8 +4,8 @@
  */
 package org.jnegre.allthenews.view;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -64,7 +64,7 @@ public class HeadlineView extends ViewPart implements RssListener {
 		table.setFocus();
 	}
 
-	public void onChannelListChanged(ArrayList channels) {
+	public void onChannelListChanged(List channels) {
 		// NOP
 	}
 

@@ -15,6 +15,7 @@
 package org.jnegre.allthenews.dialogs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -27,7 +28,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.Plugin;
-import org.jnegre.allthenews.pref.ChannelStore;
 
 /**
  * @author Jérôme Nègre
@@ -76,11 +76,9 @@ public class NewChannelDialog extends Dialog {
 	 */
 	protected void okPressed() {
 		Channel channel = new Channel(titleText.getText(), urlText.getText());
-		ArrayList channels = Plugin.getDefault().getChannelList();
-		ChannelStore.saveReadStatus(channels);
+		List channels = new ArrayList(Plugin.getDefault().getChannelList());
 		channels.add(channel);
-		ChannelStore.setChannels(channels);
-		Plugin.getDefault().updateChannelList();
+		Plugin.getDefault().updateChannelList(channels);
 		Plugin.getDefault().update();
 		this.close();
 	}

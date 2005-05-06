@@ -8,12 +8,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.jnegre.allthenews.Channel;
-import org.jnegre.allthenews.Item;
+import org.jnegre.allthenews.Folder;
 import org.jnegre.allthenews.Plugin;
 
 /**
@@ -28,10 +27,9 @@ public class ChannelStore {
 	private final static String CHANNELS_ORDER_KEY = "order";
 	private final static String TITLE_KEY = "title";
 	private final static String URL_KEY = "url";
-	private final static String TYPE_KEY = "type";
 	private final static String READ_KEY = "read";
 	
-	private final static int TYPE_CHANNEL = 1;
+	private final static String ROOT_FOLDER_KEY = "rootFolder";
 	
 	private static Plugin plugin = null;
 	
@@ -39,55 +37,53 @@ public class ChannelStore {
 		ChannelStore.plugin = plugin;
 	}
 	
-	public static synchronized ArrayList getChannels() {
-		IDialogSettings section = getChannelsSection();
-		String[] uids =  section.getArray(CHANNELS_ORDER_KEY);
-		ArrayList result = new ArrayList();
-		for(int i=0; i<uids.length; i++) {
-			String uid = uids[i];
-			IDialogSettings channelSection = section.getSection(uid);
-			String title = channelSection.get(TITLE_KEY);
-			String url = channelSection.get(URL_KEY);
-			
-			String[] readUids = channelSection.getArray(READ_KEY);
-			HashSet set = new HashSet();
-			if(readUids != null) {
-				for(int k=0; k<readUids.length; k++) {
-					set.add(readUids[k]);
-				}
-			}
-			
-			result.add(new Channel(title, url, set));
+	public static synchronized Folder getRootFolder() {
+		IDialogSettings section = plugin.getDialogSettings().getSection(BACKENDS_SECTION);
+		
+		if(section  == null) {
+			Folder root = new Folder();
+			root.setContent(getDefaultChannels());
+			return root;
 		}
-		return result;
+		
+		String b64 = section.get(ROOT_FOLDER_KEY);
+		if(b64 != null) {
+			Folder root = (Folder)Base64.decodeToObject(b64);
+			return root;
+		} else {
+			//compatibility with old way to save channels
+			String[] uids =  section.getArray(CHANNELS_ORDER_KEY);
+			ArrayList result = new ArrayList();
+			for(int i=0; i<uids.length; i++) {
+				String uid = uids[i];
+				IDialogSettings channelSection = section.getSection(uid);
+				String title = channelSection.get(TITLE_KEY);
+				String url = channelSection.get(URL_KEY);
+				
+				String[] readUids = channelSection.getArray(READ_KEY);
+				HashSet set = new HashSet();
+				if(readUids != null) {
+					for(int k=0; k<readUids.length; k++) {
+						set.add(readUids[k]);
+					}
+				}
+				
+				result.add(new Channel(title, url, set));
+			}
+			Folder root = new Folder();
+			root.setContent(result);
+			return root;
+		}
 	}
 
-	public static synchronized void setChannels(ArrayList channels) {
-		IDialogSettings section = getChannelsSection();
-		section.put(CHANNELS_ORDER_KEY,new String[0]);
-		int newSize = channels.size();
-		for(int i=0; i<newSize; i++) {
-			Channel channel = (Channel)channels.get(i); 
-			addChannel(section,channel);
+	public static synchronized void saveReadStatus(Folder rootFolder) {
+		IDialogSettings channelsSection = plugin.getDialogSettings().getSection(BACKENDS_SECTION);
+		if(channelsSection == null) {
+			channelsSection = plugin.getDialogSettings().addNewSection(BACKENDS_SECTION);
 		}
-	}
-	
-	public static synchronized void saveReadStatus(ArrayList channels) {
-		IDialogSettings channelsSection = getChannelsSection();
-		Iterator channelIter = channels.iterator();
-		while(channelIter.hasNext()) {
-			Channel channel = (Channel)channelIter.next();
-			IDialogSettings section = channelsSection.getSection(channel.getUID());
-			Iterator itemIter = channel.getItems().iterator();
-			ArrayList readItems = new ArrayList();
-			while(itemIter.hasNext()) {
-				Item item = (Item)itemIter.next();
-				if(item.isReadFlag()) {
-					readItems.add(item.getUID());
-				}
-			}
-			section.put(READ_KEY,(String[])readItems.toArray(new String[0]));
-		}
+
+		String b64 = Base64.encodeObject(rootFolder, Base64.GZIP | Base64.DONT_BREAK_LINES);
+		channelsSection.put(ROOT_FOLDER_KEY, b64);
 	}
 	
 	public static synchronized ArrayList getDefaultChannels() {
@@ -107,66 +103,6 @@ public class ChannelStore {
 		}
 		return result;
 		
-	}
-	
-	/**
-	 * Returns a non null Channels Section,
-	 * creating it if needed.
-	 * @return
-	 */
-	private static IDialogSettings getChannelsSection() {
-        IDialogSettings section = plugin.getDialogSettings().getSection(BACKENDS_SECTION);
-        if(section == null) {
-        	section = createDefaultChannelsSection();
-        }
-        return section;
-	}
-	
-	private static IDialogSettings createDefaultChannelsSection() {
-		IDialogSettings section = plugin.getDialogSettings().addNewSection(BACKENDS_SECTION);
-		section.put(CHANNELS_ORDER_KEY,new String[0]);
-		//add some default channels from config file
-		Iterator iterator = getDefaultChannels().iterator();
-		while(iterator.hasNext()) {
-			addChannel(section, (Channel)iterator.next());
-		}
-		return section;
-	}
-	
-	private static void addChannel(IDialogSettings backendSection, Channel channel) {
-		String title = channel.getTitle();
-		String url = channel.getUrl();
-		String uid = channel.getUID();
-		//check that section does not already exist before
-		//creating it, and if it exists, add it to the order key
-		//only if it's not already in it.
-		IDialogSettings section = backendSection.getSection(uid);
-		boolean addInOrder = true;
-		if(section == null) {
-			//create section
-			section = backendSection.addNewSection(uid);
-		} else {
-			//check if the section is already in the order key
-			String[] orders = backendSection.getArray(CHANNELS_ORDER_KEY);
-			for(int i=0; i<orders.length; i++) {
-				if(orders[i].equals(uid)) {
-					addInOrder = false;
-					break;
-				}
-			}
-		}
-		//set data
-		section.put(TITLE_KEY, title);
-		section.put(URL_KEY, url);
-		section.put(TYPE_KEY, TYPE_CHANNEL);
-		//set order key if needed
-		if(addInOrder) {
-			String[] oldOrder = backendSection.getArray(CHANNELS_ORDER_KEY);
-			String[] newOrder = new String[oldOrder.length+1];
-			System.arraycopy(oldOrder, 0, newOrder, 0, oldOrder.length);
-			newOrder[oldOrder.length] = uid;
-			backendSection.put(CHANNELS_ORDER_KEY,newOrder);
-		}
 	}
 	
 }

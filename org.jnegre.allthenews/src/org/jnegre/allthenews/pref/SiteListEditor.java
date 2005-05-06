@@ -42,7 +42,7 @@ public class SiteListEditor extends FieldEditor {
 	 * (before creation or after disposal).
 	 */
 	private List list;
-	private ArrayList channels;
+	private java.util.List channels;
 	/**
 	 * The button box containing the Add, Remove, Up, and Down buttons;
 	 * <code>null</code> if none (before creation or after disposal).
@@ -203,7 +203,7 @@ public class SiteListEditor extends FieldEditor {
 	 */
 	protected void doLoad() {
 		if (list != null) {
-			channels = ChannelStore.getChannels();
+			channels = new ArrayList(Plugin.getDefault().getChannelList());//ChannelStore.getChannels();
 			for (int i = 0; i < channels.size(); i++) {
 				list.add(((Channel)channels.get(i)).getTitle());
 			}
@@ -226,9 +226,7 @@ public class SiteListEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doStore() {
-		ChannelStore.saveReadStatus(Plugin.getDefault().getChannelList());
-		ChannelStore.setChannels(channels);
-		Plugin.getDefault().updateChannelList();
+		Plugin.getDefault().updateChannelList(channels);
 	}
 	/**
 	 * Notifies that the Down button has been pressed.

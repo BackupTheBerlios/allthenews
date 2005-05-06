@@ -2,6 +2,7 @@ package org.jnegre.allthenews;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,10 +40,11 @@ public class Plugin extends AbstractUIPlugin {
 
     protected Timer timer;
 
-    protected ArrayList channelList;
-    protected Object channelLock = new Object();
+    private Object channelLock = new Object();
     
-    protected ArrayList banList = new ArrayList();
+    private ArrayList banList = new ArrayList();
+    
+    private Folder rootFolder = new Folder();
     
     /**
      * List of RssListeners to notify
@@ -120,7 +122,7 @@ public class Plugin extends AbstractUIPlugin {
 
 	public void notifyChannelListChanged(RssListener source) {
 		Iterator iterator = rssListeners.iterator();
-		ArrayList channels = getChannelList();
+		List channels = getChannelList();
 		while(iterator.hasNext()) {
 			RssListener listener = (RssListener)iterator.next();
 			if(listener != source) {
@@ -200,15 +202,27 @@ public class Plugin extends AbstractUIPlugin {
     
     public void updateChannelList() {
         synchronized(channelLock) {
-            channelList = ChannelStore.getChannels();
+            rootFolder = ChannelStore.getRootFolder();
         }
         notifyChannelListChanged(null);
     }
 
-    public ArrayList getChannelList() {
+    public void updateChannelList(List folderContent) {
         synchronized(channelLock) {
-            return new ArrayList(channelList);
+            rootFolder.setContent(folderContent);
         }
+        notifyChannelListChanged(null);
+    }
+
+    // FIXME remove this method
+    public List getChannelList() {
+        synchronized(channelLock) {
+        	return rootFolder.getContent();
+        }
+    }
+    
+    public Folder getRootFolder() {
+    	return rootFolder;
     }
 
     public void update() {
@@ -225,7 +239,9 @@ public class Plugin extends AbstractUIPlugin {
     }
 
 	public void shutdown() throws CoreException {
-		ChannelStore.saveReadStatus(getChannelList());
+        synchronized(channelLock) {
+        	ChannelStore.saveReadStatus(rootFolder);
+        }
 		super.shutdown();
 	}
 }

@@ -4,14 +4,14 @@
  */
 package org.jnegre.allthenews;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jérôme Nègre
  */
 public interface RssListener {
 	
-	public void onChannelListChanged(ArrayList channels);
+	public void onChannelListChanged(List channels);
 	
 	public void onChannelStatusChanged(Channel channel);
 

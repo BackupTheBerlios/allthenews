@@ -5,7 +5,7 @@
 package org.jnegre.allthenews.view;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.action.Action;
@@ -102,7 +102,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 		browser.setFocus();
 	}
 
-	public void onChannelListChanged(ArrayList channels) {
+	public void onChannelListChanged(List channels) {
 		//NOP
 	}
 
