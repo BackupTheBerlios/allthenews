@@ -2,7 +2,7 @@
 <feature
       id="org.jnegre.feature.allthenews"
       label="All The News"
-      version="3.0.4"
+      version="3.0.5"
       provider-name="Jerome Negre">
 
    <license url="http://www.jnegre.org/cpl1_0.html">
@@ -32,6 +32,6 @@ See http://www.jnegre.org/cpl1_0.html
          id="org.jnegre.allthenews"
          download-size="160000"
          install-size="160000"
-         version="3.0.4"/>
+         version="3.0.5"/>
 
 </feature>
