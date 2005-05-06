@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 /**
  * @author jnegre - http://www.jnegre.org/
@@ -87,8 +86,7 @@ public class Channel implements Serializable {
             //end workaround
             
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            InputSource inputSource = new InputSource(pbStream);
-            Document doc = parser.parse(inputSource);
+            Document doc = parser.parse(pbStream);
             pbStream.close();
             NodeList itemNodes = doc.getElementsByTagName("item");
             for (int i = 0; i < itemNodes.getLength(); i++) {

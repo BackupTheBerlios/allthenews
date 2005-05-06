@@ -1,6 +1,7 @@
 3.0.5
 
 	* The date and description of items are saved on Eclipse shutdown
+	* Fix for bug 3429 (found and fixed by Nikolay Metchev)
 
 3.0.4
 
