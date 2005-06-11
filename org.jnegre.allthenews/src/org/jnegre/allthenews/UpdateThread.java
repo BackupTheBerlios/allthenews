@@ -21,12 +21,15 @@ public class UpdateThread extends Thread {
         	Plugin plugin = Plugin.getDefault();
             Iterator iterator = Plugin.getDefault().getChannelList().iterator();
             while(iterator.hasNext()) {
-                Channel channel = (Channel)iterator.next();
-                channel.setRefreshing(true);
-                plugin.notifyChannelStatusChanged(channel, null);
-                channel.update();
-                channel.setRefreshing(false);
-                plugin.notifyChannelStatusChanged(channel, null);
+            	Object content = iterator.next();
+            	if(content instanceof Channel) {
+	                Channel channel = (Channel)content;
+	                channel.setRefreshing(true);
+	                plugin.notifyChannelStatusChanged(channel, null);
+	                channel.update();
+	                channel.setRefreshing(false);
+	                plugin.notifyChannelStatusChanged(channel, null);
+            	}
             }
         } finally {
             Plugin.getDefault().updateThread = null;
