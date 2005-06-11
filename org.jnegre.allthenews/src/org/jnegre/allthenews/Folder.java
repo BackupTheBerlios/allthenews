@@ -28,7 +28,24 @@ public class Folder implements Serializable {
 
 	private static final long serialVersionUID = 1L; //must not change
 
+	private String name;
     private List content;
+
+    /**
+     * Constructs the (anonymous) root folder
+     *
+     */
+    public Folder() {
+    	this("ROOT FOLDER");
+    }
+    
+    /**
+     * Constructs a named folder (not the root folder)
+     * @param name
+     */
+    public Folder(String name) {
+    	this.name = name;
+    }
 
     public void setContent(List newContent) {
     	content = Collections.unmodifiableList(newContent);
@@ -38,8 +55,17 @@ public class Folder implements Serializable {
     	return content;
     }
     
+    public void setName(String newName) {
+    	this.name = newName;
+    }
+    
+    public String getName() {
+    	return name;
+    }
+    
     private void writeObject(ObjectOutputStream out) throws IOException {
     	out.writeInt(1);//serialization version number
+    	out.writeObject(name);
     	out.writeObject(content);
     }
     
@@ -47,6 +73,7 @@ public class Folder implements Serializable {
     	int serializationVersion = in.readInt();
     	switch(serializationVersion) {
     		case 1:
+    			name = (String)in.readObject();
     			content = (List)in.readObject();
     			break;
     		default:
