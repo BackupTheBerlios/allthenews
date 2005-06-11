@@ -215,6 +215,7 @@ public class Plugin extends AbstractUIPlugin {
     }
 
     // FIXME remove this method
+    /** @deprecated */
     public List getChannelList() {
         synchronized(channelLock) {
         	return rootFolder.getContent();
