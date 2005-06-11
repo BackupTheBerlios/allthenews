@@ -15,12 +15,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.part.ViewPart;
 import org.jnegre.allthenews.Channel;
 import org.jnegre.allthenews.IconManager;
 import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
+import org.jnegre.allthenews.dialogs.ChannelPropertiesDialog;
 import org.jnegre.allthenews.dialogs.NewChannelDialog;
 
 /**
@@ -60,13 +65,32 @@ public class ExplorerView extends ViewPart implements RssListener {
 				}
 			}
 		});
+		treeViewer.getTree().setMenu(createContextMenu(parent));
 
-        createActions();
+		createActions();
         createMenu();
         createToolBar();
 
         Plugin.getDefault().addRssListener(this);
 		treeViewer.setInput(Plugin.getDefault().getRootFolder());
+	}
+	
+	private Menu createContextMenu(Composite parent) {
+		Menu menu = new Menu (parent);
+		MenuItem item = new MenuItem (menu, SWT.PUSH);
+		item.setText ("Properties...");
+		item.addListener (SWT.Selection, new Listener () {
+			public void handleEvent (Event e) {
+				Object selected = ((StructuredSelection)treeViewer.getSelection()).getFirstElement();
+				if(selected instanceof Channel) {
+	                ChannelPropertiesDialog ncd = new ChannelPropertiesDialog(ExplorerView.this.getViewSite().getShell(), (Channel)selected);
+	                ncd.open();
+				} else if (selected instanceof Item) {
+					//FIXME
+				}
+			}
+		});
+		return menu;
 	}
 
 	public void setFocus() {

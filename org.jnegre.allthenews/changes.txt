@@ -2,6 +2,8 @@
 
 	* The date and description of items are saved on Eclipse shutdown
 	* Fix for bug 3429 (found and fixed by Nikolay Metchev)
+	* Possibility to apply transformations on items (for instance to remove ads or web bugs)
+	* Possibility to modify the title and url of feeds
 
 3.0.4
 
