@@ -5,6 +5,7 @@
 package org.jnegre.allthenews.view;
 
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -36,6 +37,7 @@ import org.jnegre.allthenews.Item;
 import org.jnegre.allthenews.Messages;
 import org.jnegre.allthenews.Plugin;
 import org.jnegre.allthenews.RssListener;
+import org.jnegre.allthenews.Transformation;
 
 /**
  * @author Jérôme Nègre
@@ -120,10 +122,7 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 	public void onItemSelected(Item item) {
 		if(item != null && uiReady && linkAction.isChecked()) {
 			if(showDescritionAction.isChecked()) {
-				String desc = item.getDescription();
-				if(desc == null)
-					desc = HTML_NO_DESCRIPTION;
-				browser.setText(MessageFormat.format(HTML,new String[]{desc, encodeNewLine(desc), item.getUsableLink(), item.getUsableTitle()}));
+				browser.setText(getHtmlDescription(item));
 			} else {
 				browser.setUrl(item.getUsableLink());
 			}
@@ -135,6 +134,20 @@ public class BrowserView extends ViewPart implements RssListener, TitleListener,
 				Plugin.getDefault().notifyChannelStatusChanged(item.getChannel(),this);
 			}
 		}
+	}
+	
+	private String getHtmlDescription(Item item) {
+		String desc = item.getDescription();
+		if(desc == null) {
+			desc = HTML_NO_DESCRIPTION;
+		} else {
+			Iterator iter = item.getChannel().getTransformations().iterator();
+			while(iter.hasNext()) {
+				Transformation transfo = (Transformation)iter.next();
+				desc = transfo.apply(desc);
+			}
+		}
+		return MessageFormat.format(HTML,new String[]{desc, encodeNewLine(desc), item.getUsableLink(), item.getUsableTitle()});
 	}
 
 	public void changed(TitleEvent event) {
