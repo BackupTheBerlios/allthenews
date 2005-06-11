@@ -42,7 +42,7 @@ public class NewChannelDialog extends Dialog {
 	 */
 	public NewChannelDialog(Shell parentShell) {
 		super(parentShell);
-		setShellStyle(SWT.DIALOG_TRIM|SWT.RESIZE);
+		setShellStyle(SWT.DIALOG_TRIM|SWT.RESIZE|SWT.SYSTEM_MODAL);
 	}
 	
 	protected Control createDialogArea(Composite parent) {
