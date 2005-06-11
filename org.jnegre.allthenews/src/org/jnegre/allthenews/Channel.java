@@ -38,6 +38,8 @@ public class Channel implements Serializable {
     
     private ArrayList items = new ArrayList();
     private HashSet readUids = null;
+    
+    private ArrayList transformations = new ArrayList();
 
     /**
      * Constructor for Channel.
@@ -126,6 +128,13 @@ public class Channel implements Serializable {
         return url;
     }
 
+	/**
+	 * @param url The url to set.
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
     /**
      * Returns the errorMessage.
      * @return String
@@ -156,6 +165,13 @@ public class Channel implements Serializable {
     public String getTitle() {
         return title;
     }
+
+    /**
+	 * @param title The title to set.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
     /**
      * Returns the refreshing.
@@ -192,13 +208,26 @@ public class Channel implements Serializable {
     	return "CHA" + url;
     }
 
-    
+	/**
+	 * @return Returns the transformations.
+	 */
+	public ArrayList getTransformations() {
+		return transformations;
+	}
+	/**
+	 * @param transformations The transformations to set.
+	 */
+	public void setTransformations(ArrayList transformations) {
+		this.transformations = transformations;
+	}
+   
     private void writeObject(ObjectOutputStream out) throws IOException {
     	out.writeInt(1);//serialization version number
     	out.writeObject(items);
     	out.writeObject(title);
     	out.writeObject(url);
     	out.writeBoolean(unread);
+    	out.writeObject(transformations);
     }
     
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
@@ -209,6 +238,7 @@ public class Channel implements Serializable {
     			title = (String)in.readObject();
     			url = (String)in.readObject();
     			unread = in.readBoolean();
+    			transformations = (ArrayList)in.readObject();
     			break;
     		default:
     			throw new IOException("Unsupported serialization version: "+serializationVersion);
