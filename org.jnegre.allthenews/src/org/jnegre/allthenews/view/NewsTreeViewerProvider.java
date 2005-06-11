@@ -51,12 +51,8 @@ public class NewsTreeViewerProvider
 		return ((Folder)inputElement).getContent().toArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		//NOP
 	}
 
 	/* (non-Javadoc)
@@ -99,6 +95,8 @@ public class NewsTreeViewerProvider
 			return ((Channel)element).getTitle();
 		} else if(element instanceof Item) {
 			return ((Item)element).getUsableTitle();
+		} else if(element instanceof Folder) {
+			return ((Folder)element).getName();
 		} else {
 			return "Unexpected object: "+element;
 		}
