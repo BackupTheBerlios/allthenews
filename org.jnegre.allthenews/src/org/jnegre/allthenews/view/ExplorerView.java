@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -76,7 +77,7 @@ public class ExplorerView extends ViewPart implements RssListener {
 	}
 	
 	private Menu createContextMenu(Composite parent) {
-		Menu menu = new Menu (parent);
+		final Menu menu = new Menu (parent);
 		MenuItem item = new MenuItem (menu, SWT.PUSH);
 		item.setText ("Properties...");
 		item.addListener (SWT.Selection, new Listener () {
@@ -85,11 +86,18 @@ public class ExplorerView extends ViewPart implements RssListener {
 				if(selected instanceof Channel) {
 	                ChannelPropertiesDialog ncd = new ChannelPropertiesDialog(ExplorerView.this.getViewSite().getShell(), (Channel)selected);
 	                ncd.open();
-				} else if (selected instanceof Item) {
-					//FIXME
 				}
 			}
 		});
+		
+		menu.addListener (SWT.Show, new Listener () {
+			public void handleEvent (Event event) {
+				Object selected = ((StructuredSelection)treeViewer.getSelection()).getFirstElement();
+				boolean isChannel = selected instanceof Channel;
+				menu.getItem(0).setEnabled(isChannel);//Properties
+			}
+		});
+		
 		return menu;
 	}
 
