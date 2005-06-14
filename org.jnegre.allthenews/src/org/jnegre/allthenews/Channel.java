@@ -36,6 +36,7 @@ public class Channel implements Serializable {
     private String errorMessage = null;
     private boolean unread = false;
     
+    private Folder parentFolder = null;
     private ArrayList items = new ArrayList();
     private HashSet readUids = null;
     
@@ -221,6 +222,59 @@ public class Channel implements Serializable {
 		this.transformations = transformations;
 	}
    
+	/**
+	 * @return Returns the parentFolder.
+	 */
+	public Folder getParentFolder() {
+		//XXX $0.02 hack
+		if(parentFolder != null) {
+			return parentFolder;
+		} else {
+			return Plugin.getDefault().getRootFolder();
+		}
+	}
+	/**
+	 * @param parentFolder The parentFolder to set.
+	 */
+	public void setParentFolder(Folder parentFolder) {
+		this.parentFolder = parentFolder;
+	}
+
+    public boolean equals(Object obj) {
+    	if(!(obj instanceof Channel)) {
+    		return false;
+    	}
+    	Channel chan = (Channel)obj;
+    	//FIXME pfffff...
+    	if(chan.url==null) {
+    		if(this.url!=null) {
+    			return false;
+    		}
+    	} else {
+    		if(!chan.url.equals(this.url)) {
+    			return false;
+    		}
+    	}
+
+    	if(chan.title==null) {
+    		if(this.title!=null) {
+    			return false;
+    		}
+    	} else {
+    		if(!chan.title.equals(this.title)) {
+    			return false;
+    		}
+    	}
+
+		return true;
+	}
+
+    public int hashCode() {
+    	int part1 = url!=null?url.hashCode():0;
+    	int part2 = title!=null?title.hashCode():0;
+		return part1 + part2;
+	}
+
     private void writeObject(ObjectOutputStream out) throws IOException {
     	out.writeInt(1);//serialization version number
     	out.writeObject(items);
@@ -228,6 +282,7 @@ public class Channel implements Serializable {
     	out.writeObject(url);
     	out.writeBoolean(unread);
     	out.writeObject(transformations);
+    	//TODO serialize folder
     }
     
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
@@ -239,6 +294,7 @@ public class Channel implements Serializable {
     			url = (String)in.readObject();
     			unread = in.readBoolean();
     			transformations = (ArrayList)in.readObject();
+    			parentFolder = null;//can't get the root folder from the plugin yet, since it is being deserialized NOW
     			break;
     		default:
     			throw new IOException("Unsupported serialization version: "+serializationVersion);
