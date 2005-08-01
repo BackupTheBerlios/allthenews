@@ -1,3 +1,7 @@
+3.0.6
+
+	* Added a base url in preview to allow the resolution of relative paths
+
 3.0.5
 
 	* The date and description of items are saved on Eclipse shutdown
